@@ -3,8 +3,8 @@ package com.elmakers.mine.bukkit.gameplay;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
-import com.elmakers.mine.bukkit.gameplay.dao.BlockData;
-import com.elmakers.mine.bukkit.gameplay.dao.BlockList;
+import com.elmakers.mine.bukkit.persistence.dao.BlockData;
+import com.elmakers.mine.bukkit.persistence.dao.BlockList;
 
 public class BlockRecurse
 {

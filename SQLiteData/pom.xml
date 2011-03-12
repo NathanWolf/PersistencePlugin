@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.elmakers.mine.bukkit.persistence</groupId>
-  <artifactId>Persistence</artifactId>
+  <groupId>com.elmakers.mine.bukkit.data.sqlite</groupId>
+  <artifactId>SQLiteData</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>elMakers - Bukkit Plugins : Persistence</name>
+  <name>elMakers - Bukkit Plugins : SQLiteData</name>
   <url>http://mine.elmakers.com</url>
   <dependencyManagement>
   	<dependencies>
@@ -28,8 +28,15 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-    	<groupId>com.elmakers.mine.bukkit.permissions</groupId>
-    	<artifactId>Permissions</artifactId>
+    	<groupId>org.xerial</groupId>
+    	<artifactId>sqlite-jdbc</artifactId>
+    	<version>3.7.2</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.elmakers.mine.bukkit.data</groupId>
+    	<artifactId>Data</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
     	<type>jar</type>
     	<scope>compile</scope>

@@ -3,9 +3,9 @@ package com.elmakers.mine.bukkit.gameplay;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import com.elmakers.mine.bukkit.gameplay.dao.BlockList;
-import com.elmakers.mine.bukkit.gameplay.dao.MaterialData;
-import com.elmakers.mine.bukkit.gameplay.dao.MaterialList;
+import com.elmakers.mine.bukkit.persistence.dao.BlockList;
+import com.elmakers.mine.bukkit.persistence.dao.MaterialData;
+import com.elmakers.mine.bukkit.persistence.dao.MaterialList;
 
 public class ReplaceMaterialAction implements BlockRecurseAction
 {

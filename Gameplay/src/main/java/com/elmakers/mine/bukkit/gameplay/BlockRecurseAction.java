@@ -2,7 +2,7 @@ package com.elmakers.mine.bukkit.gameplay;
 
 import org.bukkit.block.Block;
 
-import com.elmakers.mine.bukkit.gameplay.dao.BlockList;
+import com.elmakers.mine.bukkit.persistence.dao.BlockList;
 
 public interface BlockRecurseAction
 {
