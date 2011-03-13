@@ -2,11 +2,11 @@ package com.elmakers.mine.bukkit.persistence.dao;
 
 import java.util.List;
 
-import com.elmakers.mine.bukkit.persistence.Persisted;
+import com.elmakers.mine.bukkit.persisted.MigrateStep;
+import com.elmakers.mine.bukkit.persisted.PersistClass;
+import com.elmakers.mine.bukkit.persisted.PersistField;
+import com.elmakers.mine.bukkit.persisted.Persisted;
 import com.elmakers.mine.bukkit.persistence.PersistedClass;
-import com.elmakers.mine.bukkit.persistence.annotation.MigrateStep;
-import com.elmakers.mine.bukkit.persistence.annotation.PersistClass;
-import com.elmakers.mine.bukkit.persistence.annotation.PersistField;
 
 @PersistClass(schema="global", name="migration")
 public class MigrationStep extends Persisted

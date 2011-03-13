@@ -34,6 +34,13 @@
     	<type>jar</type>
     	<scope>compile</scope>
     </dependency>
+    <dependency>
+    	<groupId>com.elmakers.mine.bukkit.persisted</groupId>
+    	<artifactId>Persisted</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
   </dependencies>
   <!-- This builds a completely 'ready to start' jar with all dependencies inside -->
   <scm>

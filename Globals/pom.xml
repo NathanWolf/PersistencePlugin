@@ -28,15 +28,15 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-    	<groupId>com.elmakers.mine.bukkit.permissions</groupId>
-    	<artifactId>Permissions</artifactId>
+    	<groupId>com.elmakers.mine.bukkit.persisted</groupId>
+    	<artifactId>Persisted</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
     	<type>jar</type>
     	<scope>compile</scope>
     </dependency>
     <dependency>
-    	<groupId>com.elmakers.mine.bukkit.dao</groupId>
-    	<artifactId>DAO</artifactId>
+    	<groupId>com.elmakers.mine.bukkit.permissions</groupId>
+    	<artifactId>Permissions</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
     	<type>jar</type>
     	<scope>compile</scope>

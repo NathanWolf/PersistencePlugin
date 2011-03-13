@@ -1,6 +1,6 @@
 package com.elmakers.mine.bukkit.persistence;
 
-import com.elmakers.mine.bukkit.persistence.annotation.PersistField;
+import com.elmakers.mine.bukkit.persisted.PersistField;
 
 public class FieldInfo
 {

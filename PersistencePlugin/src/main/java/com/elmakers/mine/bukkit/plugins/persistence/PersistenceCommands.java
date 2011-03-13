@@ -7,16 +7,16 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.elmakers.mine.bukkit.persistence.PersistedClass;
+import com.elmakers.mine.bukkit.persistence.PersistedField;
+import com.elmakers.mine.bukkit.persistence.PersistedList;
+import com.elmakers.mine.bukkit.persistence.Persistence;
+import com.elmakers.mine.bukkit.persistence.Schema;
 import com.elmakers.mine.bukkit.persistence.dao.Message;
 import com.elmakers.mine.bukkit.persistence.dao.PlayerData;
 import com.elmakers.mine.bukkit.persistence.dao.PluginCommand;
 import com.elmakers.mine.bukkit.persistence.dao.PluginData;
 import com.elmakers.mine.bukkit.utilities.PluginUtilities;
-import com.elmakers.mine.craftbukkit.persistence.Persistence;
-import com.elmakers.mine.craftbukkit.persistence.core.PersistedClass;
-import com.elmakers.mine.craftbukkit.persistence.core.PersistedField;
-import com.elmakers.mine.craftbukkit.persistence.core.PersistedList;
-import com.elmakers.mine.craftbukkit.persistence.core.Schema;
 
 public class PersistenceCommands
 {
@@ -519,7 +519,6 @@ public class PersistenceCommands
 	
 	protected void listSchemas(CommandSender messageOutput)
 	{
-		Persistence persistence = Persistence.getInstance();
 		schemaListMessage.sendTo(messageOutput);
 		List<Schema> schemas = persistence.getSchemaList();
 		for (Schema schema : schemas)
@@ -531,7 +530,6 @@ public class PersistenceCommands
 	
 	protected PersistedClass getEntity(CommandSender messageOutput, String schemaName, String entityName)
 	{
-		Persistence persistence = Persistence.getInstance();
 		Schema schema = persistence.getSchema(schemaName);
 		if (schema == null)
 		{
@@ -549,7 +547,6 @@ public class PersistenceCommands
 	
 	protected void describeSchema(CommandSender messageOutput, String schemaName)
 	{
-		Persistence persistence = Persistence.getInstance();
 		Schema schema = persistence.getSchema(schemaName);
 		if (schema == null)
 		{

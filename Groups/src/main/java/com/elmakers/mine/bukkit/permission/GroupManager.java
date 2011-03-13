@@ -14,32 +14,32 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.elmakers.mine.bukkit.persistence.Persistence;
 import com.elmakers.mine.bukkit.persistence.dao.Group;
 import com.elmakers.mine.bukkit.persistence.dao.Message;
 import com.elmakers.mine.bukkit.persistence.dao.PlayerData;
 import com.elmakers.mine.bukkit.persistence.dao.PluginCommand;
 import com.elmakers.mine.bukkit.persistence.dao.ProfileData;
-import com.elmakers.mine.bukkit.plugins.persistence.PersistencePlugin;
 import com.elmakers.mine.bukkit.utilities.PluginUtilities;
 import com.elmakers.mine.craftbukkit.permission.InvalidPermissionProfileException;
 import com.elmakers.mine.craftbukkit.permission.PermissionDescriptionNode;
 import com.elmakers.mine.craftbukkit.permission.PermissionProfile;
 import com.elmakers.mine.craftbukkit.permission.RootPermissionDescription;
-import com.elmakers.mine.craftbukkit.persistence.Persistence;
 
 public class GroupManager implements PermissionManager, PermissionHandler
 {
-	public GroupManager(Server server, Persistence persistence, File dataFolder)
+	public GroupManager(Server server, Persistence persistence, PluginUtilities utilities, File dataFolder)
 	{
 		this.persistence = persistence;
 		this.server = server;
 		this.dataFolder = dataFolder;
+		this.utilities = utilities;
+		initialize();
 	}
 	
 	public void initialize()
 	{
 	    GroupManagerDefaults d = new GroupManagerDefaults();
-	    PluginUtilities utilities = PersistencePlugin.getInstance().getUtilities();
 	    
 	    // Messages
 		addedPlayerToGroupMessage = utilities.getMessage("addedPlayerToGroup", d.addedPlayerToGroupMessage);
@@ -432,9 +432,11 @@ public class GroupManager implements PermissionManager, PermissionHandler
 	private final Map<String, RootPermissionDescription> permissions = new HashMap<String, RootPermissionDescription>();
 	private final List<PermissionHandler> permissionHandlers = new ArrayList<PermissionHandler>();
 
-	protected Persistence									persistence				= null;
-	protected Server										server					= null;
-	protected File											dataFolder				= null;
+	protected final Persistence								persistence;
+	protected final Server									server;
+	protected final File									dataFolder;
+	protected final PluginUtilities							utilities;
+
 	protected PermissionProfile								defaultProfile			= null;
 
 	protected boolean										permissionsInitialized = false;

@@ -8,8 +8,8 @@ import java.util.Iterator;
 import org.bukkit.block.Block;
 import org.bukkit.util.BlockVector;
 
-import com.elmakers.mine.bukkit.persistence.annotation.PersistClass;
-import com.elmakers.mine.bukkit.persistence.annotation.PersistField;
+import com.elmakers.mine.bukkit.persisted.PersistClass;
+import com.elmakers.mine.bukkit.persisted.PersistField;
 
 /**
  * 

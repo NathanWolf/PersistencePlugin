@@ -9,12 +9,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
+import org.bukkit.Server;
+
 import com.elmakers.mine.bukkit.data.DataField;
 import com.elmakers.mine.bukkit.data.DataRow;
 import com.elmakers.mine.bukkit.data.DataStore;
 import com.elmakers.mine.bukkit.data.DataTable;
 import com.elmakers.mine.bukkit.data.DataType;
-import com.elmakers.mine.bukkit.persistence.annotation.PersistField;
+import com.elmakers.mine.bukkit.persisted.PersistField;
+import com.elmakers.mine.bukkit.persisted.Persisted;
 import com.elmakers.mine.bukkit.persistence.exception.InvalidDataException;
 import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassException;
 
@@ -30,7 +33,7 @@ import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassExcep
  * @author NathanWolf
  *
  */
-public class PersistedClass
+public class PersistedClass implements com.elmakers.mine.bukkit.persisted.PersistedClass
 {
 	public PersistedClass(Persistence persistence, EntityInfo entityInfo)
 	{
@@ -782,8 +785,6 @@ public class PersistedClass
 	}
 
 	/**
-	 * Whew! Ok, took me a while to figure out  I needed this...
-	 * 
 	 * getIdData will recurse down objects-as-id reference chains. This is for persisting
 	 * in the data store.
 	 * 
@@ -813,6 +814,11 @@ public class PersistedClass
 			}
 		}
 		return value;
+	}
+	
+	public Server getServer()
+	{
+		return persistence.getServer();
 	}
 	
 	public PersistedField getConcreteIdField()

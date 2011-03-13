@@ -17,14 +17,14 @@ import org.bukkit.util.BlockVector;
 
 import com.elmakers.mine.bukkit.permission.GroupManager;
 import com.elmakers.mine.bukkit.permission.PermissionManager;
-import com.elmakers.mine.bukkit.persistence.CommandSenderData;
 import com.elmakers.mine.bukkit.persistence.EntityInfo;
 import com.elmakers.mine.bukkit.persistence.FieldInfo;
 import com.elmakers.mine.bukkit.persistence.PersistedClass;
+import com.elmakers.mine.bukkit.persistence.Persistence;
+import com.elmakers.mine.bukkit.persistence.dao.CommandSenderData;
 import com.elmakers.mine.bukkit.persistence.dao.PlayerData;
 import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassException;
 import com.elmakers.mine.bukkit.utilities.PluginUtilities;
-import com.elmakers.mine.craftbukkit.persistence.Persistence;
 
 /** 
  * The JavaPlugin interface for Persistence- binds Persistence to Bukkit.
@@ -74,7 +74,7 @@ public class PersistencePlugin extends JavaPlugin
 	{
 		if (persistence == null)
 		{
-			persistence = new Persistence(getServer, getDataFolder());
+			persistence = new Persistence(getServer(), getDataFolder());
 			updateGlobalData();
 		}
 		return persistence;
@@ -107,7 +107,7 @@ public class PersistencePlugin extends JavaPlugin
 		fieldZ.setSetter("setZ");
 		
 		// Create the class definition
-		PersistedClass persistVector = getPersistedClass(BlockVector.class, vectorInfo);
+		PersistedClass persistVector = persistence.getPersistedClass(BlockVector.class, vectorInfo);
 		try
 		{
 			persistVector.persistField("hashCode", vectorId);
@@ -129,11 +129,11 @@ public class PersistencePlugin extends JavaPlugin
 		
 	protected CommandSenderData updateCommandSender(String senderId, Class<?> senderClass)
 	{
-		CommandSenderData sender = get(senderId, CommandSenderData.class);
+		CommandSenderData sender = persistence.get(senderId, CommandSenderData.class);
 		if (sender == null)
 		{
 			sender = new CommandSenderData(senderId, senderClass);
-			put(sender);
+			persistence.put(sender);
 		}		
 		return sender;
 	}
@@ -210,7 +210,7 @@ public class PersistencePlugin extends JavaPlugin
 	{
 		if (utilities == null)
 		{
-			utilities = getPersistence().getUtilities(this);
+			utilities = getUtilities(this);
 		}
 		
 		return utilities;
@@ -223,7 +223,7 @@ public class PersistencePlugin extends JavaPlugin
 			// TODO: This is messy, group manager relies on plugin utilities,
 			// which needs a permission manager.
 			// Hopefully all temporary!
-			permissions = new GroupManager(getServer(), getPersistence(), getDataFolder());
+			permissions = new GroupManager(getServer(), getPersistence(), getUtilities(), getDataFolder());
 			permissions.initialize();
 			PlayerData.setPermissionHandler(permissions);
 		}
@@ -241,9 +241,9 @@ public class PersistencePlugin extends JavaPlugin
 	 */
 	public PluginUtilities getUtilities(Plugin plugin)
 	{
-		PluginUtilities utilities = new PluginUtilities(plugin, this);
+		PluginUtilities utilities = new PluginUtilities(plugin, persistence);
 		// TODO: This should be temporary...
-		utilities.loadPermissions(PersistencePlugin.getInstance().getPermissions());
+		utilities.loadPermissions(getPermissions());
 		return utilities;
 	}
 	

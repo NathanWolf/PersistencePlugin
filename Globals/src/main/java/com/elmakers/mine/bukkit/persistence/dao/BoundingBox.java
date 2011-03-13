@@ -9,8 +9,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.Vector;
 
-import com.elmakers.mine.bukkit.persistence.annotation.PersistClass;
-import com.elmakers.mine.bukkit.persistence.annotation.PersistField;
+import com.elmakers.mine.bukkit.persisted.PersistClass;
+import com.elmakers.mine.bukkit.persisted.PersistField;
 
 /**
  * Represents a BoundingBox, using two BlockVectors

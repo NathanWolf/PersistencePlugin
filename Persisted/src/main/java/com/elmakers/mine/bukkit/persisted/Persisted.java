@@ -1,7 +1,4 @@
-package com.elmakers.mine.bukkit.persistence;
-
-
-
+package com.elmakers.mine.bukkit.persisted;
 
 /**
  * This is an (optional) common base class for all persisted classes.

@@ -28,9 +28,16 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-    	<groupId>org.xerial</groupId>
-    	<artifactId>sqlite-jdbc</artifactId>
-    	<version>3.7.2</version>
+    	<groupId>com.elmakers.mine.bukkit.persistence</groupId>
+    	<artifactId>Persistence</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.elmakers.mine.bukkit.persistence.dao</groupId>
+    	<artifactId>Globals</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
     	<type>jar</type>
     	<scope>compile</scope>
     </dependency>

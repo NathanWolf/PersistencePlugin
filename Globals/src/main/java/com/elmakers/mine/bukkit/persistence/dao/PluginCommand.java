@@ -7,8 +7,8 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.elmakers.mine.bukkit.persistence.annotation.PersistClass;
-import com.elmakers.mine.bukkit.persistence.annotation.PersistField;
+import com.elmakers.mine.bukkit.persisted.PersistClass;
+import com.elmakers.mine.bukkit.persisted.PersistField;
 
 /**
  * A data class for encapsulating and storing a Command object.

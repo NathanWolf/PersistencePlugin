@@ -1,4 +1,4 @@
-package com.elmakers.mine.bukkit.persistence.annotation;
+package com.elmakers.mine.bukkit.persisted;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

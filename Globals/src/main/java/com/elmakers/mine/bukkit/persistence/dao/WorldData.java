@@ -8,9 +8,9 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.util.BlockVector;
 
-import com.elmakers.mine.bukkit.persistence.annotation.PersistClass;
-import com.elmakers.mine.bukkit.persistence.annotation.PersistField;
-import com.elmakers.mine.craftbukkit.persistence.persisted.Persisted;
+import com.elmakers.mine.bukkit.persisted.PersistClass;
+import com.elmakers.mine.bukkit.persisted.PersistField;
+import com.elmakers.mine.bukkit.persisted.Persisted;
 
 @PersistClass(schema="global", name="world")
 public class WorldData extends Persisted

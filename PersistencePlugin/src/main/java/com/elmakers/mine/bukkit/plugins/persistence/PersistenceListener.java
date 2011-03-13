@@ -4,8 +4,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
 
+import com.elmakers.mine.bukkit.persistence.Persistence;
 import com.elmakers.mine.bukkit.persistence.dao.PlayerData;
-import com.elmakers.mine.craftbukkit.persistence.Persistence;
 
 public class PersistenceListener extends PlayerListener
 {
@@ -18,7 +18,8 @@ public class PersistenceListener extends PlayerListener
 	@Override
 	public void onPlayerJoin(PlayerEvent event)
 	{
-		PersistencePlugin.getInstance().getPermissions().initializePermissions();
+		// TODO!
+		//PersistencePlugin.getInstance().getPermissions().initializePermissions();
 		
 		Player player = event.getPlayer();
 		String playerName = player.getName();

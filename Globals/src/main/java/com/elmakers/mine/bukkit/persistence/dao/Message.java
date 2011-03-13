@@ -2,9 +2,9 @@ package com.elmakers.mine.bukkit.persistence.dao;
 
 import org.bukkit.command.CommandSender;
 
-import com.elmakers.mine.bukkit.persistence.annotation.PersistClass;
-import com.elmakers.mine.bukkit.persistence.annotation.PersistField;
-import com.elmakers.mine.craftbukkit.persistence.persisted.Persisted;
+import com.elmakers.mine.bukkit.persisted.PersistClass;
+import com.elmakers.mine.bukkit.persisted.PersistField;
+import com.elmakers.mine.bukkit.persisted.Persisted;
 
 /**
  * A class to encapsulate and store in-game text.

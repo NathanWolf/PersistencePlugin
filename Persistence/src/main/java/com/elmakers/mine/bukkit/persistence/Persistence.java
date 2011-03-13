@@ -10,8 +10,8 @@ import java.util.logging.Logger;
 import org.bukkit.Server;
 
 import com.elmakers.mine.bukkit.data.DataStore;
-import com.elmakers.mine.bukkit.persistence.annotation.Migrate;
-import com.elmakers.mine.bukkit.persistence.annotation.PersistClass;
+import com.elmakers.mine.bukkit.persisted.Migrate;
+import com.elmakers.mine.bukkit.persisted.PersistClass;
 import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassException;
 
 /** 
@@ -32,7 +32,7 @@ public class Persistence
 	 *  @see PersistencePlugin#getPersistence()
 	 *  @see Persistence#getInstance()
 	 */
-	protected Persistence(Server server, File dataFolder)
+	public Persistence(Server server, File dataFolder)
 	{
 		this.server = server;
 		this.dataFolder = dataFolder;
@@ -427,11 +427,16 @@ public class Persistence
 		allowOpsSUAccess = allow;
 	}
 	
+	public Server getServer()
+	{
+		return server;
+	}
+	
 	/*
 	 * private data
 	 */
-	
-	private File dataFolder = null;
+	private final File dataFolder;
+	private final Server server;
 	
 	private static boolean allowOpsSUAccess = true;
 	
@@ -440,15 +445,8 @@ public class Persistence
 	private final Map<Class<? extends Object>, PersistedClass> persistedClassMap = new ConcurrentHashMap<Class<? extends Object>, PersistedClass>(); 
 	private final Map<String, Schema> schemaMap = new ConcurrentHashMap<String, Schema>();
 	
-	private static Persistence instance = null;
-	private Server server;
-	
 	// Locks for manual synchronization
 	
 	// Make sure that we don't create a persisted class twice at the same time
 	private static final Object classCreateLock = new Object();
-	
-	// Make sure we don't create more than one instance of Persistence
-	private static final Object instanceLock = new Object();
-	
 }

@@ -27,6 +27,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import com.elmakers.mine.bukkit.permission.PermissionManager;
+import com.elmakers.mine.bukkit.persistence.Persistence;
 import com.elmakers.mine.bukkit.persistence.dao.CommandSenderData;
 import com.elmakers.mine.bukkit.persistence.dao.Message;
 import com.elmakers.mine.bukkit.persistence.dao.PermissionType;
@@ -37,7 +38,6 @@ import com.elmakers.mine.bukkit.persistence.dao.WorldData;
 import com.elmakers.mine.craftbukkit.permission.PermissionDescriptionException;
 import com.elmakers.mine.craftbukkit.permission.PermissionDescriptionNodeException;
 import com.elmakers.mine.craftbukkit.permission.RootPermissionDescription;
-import com.elmakers.mine.craftbukkit.persistence.Persistence;
 
 /** 
  * An interface for displaying data-driven messages and processing data-driven commands.
@@ -485,16 +485,6 @@ public class PluginUtilities
 		}
 		
 		return false;
-	}
-	
-	// TODO : These should go in Server!
-	public Persistence getPersistence()
-	{
-		if (persistence == null)
-		{
-			persistence = Persistence.getInstance();
-		}
-		return persistence;
 	}
 
 	private Persistence			persistence;
