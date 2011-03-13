@@ -49,8 +49,7 @@ public class LocationData extends Persisted
 	public LocationData(final World world, final double x, final double y, final double z)
 	{
 		position = new BlockVector(x, y, z);
-		// TODO Fix this- go through persisted base class.
-		//worldData = Persistence.getInstance().get(world.getName(), WorldData.class);
+		worldData = getPersistence().get(world.getName(), WorldData.class);
 		orientation = null;
 	}
 
@@ -67,8 +66,7 @@ public class LocationData extends Persisted
 	public LocationData(final World world, final double x, final double y, final double z, final float yaw, final float pitch)
 	{
 		position = new BlockVector(x, y, z);
-		// TODO Fix this- go through persisted base class.
-		// worldData = Persistence.getInstance().get(world.getName(), WorldData.class);
+		worldData = getPersistence().get(world.getName(), WorldData.class);
 		orientation = new Orientation(yaw, pitch);
 	}
 
@@ -326,8 +324,7 @@ public class LocationData extends Persisted
 	 */
 	public void setWorld(World world)
 	{
-		// TODO Fix this- go through persisted base class.
-		// worldData = Persistence.getInstance().get(world.getName(), WorldData.class);
+		worldData = getPersistence().get(world.getName(), WorldData.class);
 	}
 
 	/**
@@ -414,8 +411,7 @@ public class LocationData extends Persisted
 	 */
 	public void updateWorld(Location loc)
 	{
-		// TODO Fix this - go through persisted base class
-		// worldData = Persistence.getInstance().get(loc.getWorld().getName(), WorldData.class);
+		worldData = getPersistence().get(loc.getWorld().getName(), WorldData.class);
 	}
 
     /**

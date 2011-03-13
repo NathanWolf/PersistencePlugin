@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import com.elmakers.mine.bukkit.persisted.PersistClass;
 import com.elmakers.mine.bukkit.persisted.PersistField;
+import com.elmakers.mine.bukkit.persisted.Persisted;
 
 /**
  * A data class for encapsulating and storing a Command object.
@@ -18,7 +19,7 @@ import com.elmakers.mine.bukkit.persisted.PersistField;
  */
 
 @PersistClass(name="command", schema="global")
-public class PluginCommand implements Comparable<PluginCommand>
+public class PluginCommand extends Persisted implements Comparable<PluginCommand>
 {	
 	/**
 	 * The default constructor, used by Persistence to create instances.
@@ -133,13 +134,7 @@ public class PluginCommand implements Comparable<PluginCommand>
 			
 			// adds senders
 			addSubCommand(child);	
-			
-			// TOOD : Fix this, somehow...
-			/*
-			Persistence persistence = Persistence.getInstance();
-			persistence.put(child);
-			persistence.put(this);
-			*/
+			getPersistence().put(child);
 		}	
 		
 		child.setPermissionType(pType);
@@ -180,17 +175,13 @@ public class PluginCommand implements Comparable<PluginCommand>
 	}
 	
 	public boolean checkPermission(CommandSender sender)
-	{
-		// TODO Fix this, go through persisted base class ??
-		return true;
-		
-		/*
+	{		
 		Player player = null;
 		PlayerData playerData = null;
 		if (sender instanceof Player)
 		{
 			player = (Player)sender;
-			playerData = Persistence.getInstance().get(player.getName(), PlayerData.class);
+			playerData = getPersistence().get(player.getName(), PlayerData.class);
 		}
 		
 		if (player == null)
@@ -211,7 +202,6 @@ public class PluginCommand implements Comparable<PluginCommand>
 		}
 		
 		return true;
-		*/
 	}
 	
 	/**

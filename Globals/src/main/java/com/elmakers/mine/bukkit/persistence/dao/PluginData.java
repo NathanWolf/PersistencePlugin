@@ -79,11 +79,7 @@ public class PluginData extends Persisted
 		messageMap.put(messageId, message);
 		messages.add(message);
 
-		// TODO : Fix this, somehow
-		/*
-		Persistence persistence = Persistence.getInstance();
-		persistence.put(message);
-		*/
+		getPersistence().put(message);
 		return message;
 	}
 	
@@ -120,13 +116,9 @@ public class PluginData extends Persisted
 			command.addSender(sender);
 		}
 
-		// TODO Fix this, somehow
-		/*
-		Persistence persistence = Persistence.getInstance();
-		persistence.put(command);
+		getPersistence().put(command);
 		commandMap.put(commandName, command);
 		commands.add(command);
-		*/
 		
 		return command;
 	}
