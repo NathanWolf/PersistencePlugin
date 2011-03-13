@@ -821,6 +821,11 @@ public class PersistedClass implements com.elmakers.mine.bukkit.persisted.Persis
 		return persistence.getServer();
 	}
 	
+	public com.elmakers.mine.bukkit.persisted.Persistence getPersistence()
+	{
+		return persistence;
+	}
+	
 	public PersistedField getConcreteIdField()
 	{
 		if (idField == null)

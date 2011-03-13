@@ -74,7 +74,10 @@ public class PersistencePlugin extends JavaPlugin
 	{
 		if (persistence == null)
 		{
-			persistence = new Persistence(getServer(), getDataFolder());
+			persistence = new Persistence(getServer());
+			
+			// TODO: Load DataStore providers
+			
 			updateGlobalData();
 		}
 		return persistence;
@@ -251,7 +254,6 @@ public class PersistencePlugin extends JavaPlugin
 	 * Private data
 	 */
 
-	private static PersistencePlugin	pluginInstance	= null;
 	private final PersistenceListener	listener		= new PersistenceListener();
 	private final PersistenceCommands	handler			= new PersistenceCommands();
 	private Persistence					persistence		= null;

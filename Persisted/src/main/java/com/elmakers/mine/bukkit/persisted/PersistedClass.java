@@ -6,4 +6,5 @@ public interface PersistedClass
 {
 	public Object getIdData(Object o);
 	public Server getServer();
+	public Persistence getPersistence();
 }

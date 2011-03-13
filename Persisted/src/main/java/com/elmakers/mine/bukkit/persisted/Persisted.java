@@ -39,11 +39,16 @@ public class Persisted implements Cloneable
     	// TODO!
         return null;
     }
-
+    
+    public Persistence getPersistence()
+    {
+    	return persistedClass.getPersistence();
+    }
+    
 	public void setPersistedClass(PersistedClass owningClass)
 	{
 		this.persistedClass = owningClass;
 	}
-
+    
 	protected PersistedClass	persistedClass = null;
 }

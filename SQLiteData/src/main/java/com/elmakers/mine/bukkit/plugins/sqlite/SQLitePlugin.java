@@ -1,9 +1,14 @@
 package com.elmakers.mine.bukkit.plugins.sqlite;
 
+import java.io.File;
 import java.util.logging.Logger;
 
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.elmakers.mine.bukkit.data.DataStore;
+import com.elmakers.mine.bukkit.data.DataStoreProvider;
+import com.elmakers.mine.bukkit.data.sql.SqlLiteStore;
 
 /** 
  * A plugin to add a SQLite DataStore provider to the Persistence plugin
@@ -11,12 +16,11 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author NathanWolf
  *
  */
-public class SQLitePlugin extends JavaPlugin
+public class SQLitePlugin extends JavaPlugin implements DataStoreProvider
 {
 	/*
 	 * Public API
 	 */
-
 
 	/*
 	 * Plugin interface
@@ -53,9 +57,20 @@ public class SQLitePlugin extends JavaPlugin
 	
 	protected void initialize()
 	{
-		// TODO
+		dataFolder.mkdirs();
 	}
 
 	private static final Logger	log	= Logger.getLogger("Minecraft");
+
+	public String getType()
+	{
+		return "sqlite";
+	}
+
+	public DataStore createStore(String schema)
+	{
+		return new SqlLiteStore(schema, dataFolder);
+	}
 	
+	protected File dataFolder = null;
 }

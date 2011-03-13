@@ -1,8 +1,6 @@
 package com.elmakers.mine.bukkit.data.sql;
 
-import java.io.File;
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,6 +26,11 @@ public abstract class SqlStore extends DataStore
 	public abstract String getMasterTableName();
 	public abstract String getConnectionString(String schema, String user, String password);
 	public abstract String getTypeName(DataType dataType);
+	
+	public SqlStore(String schema)
+	{
+		super(schema);
+	}
 	
 	/**
 	 * Called on connect- override to perform special actions on connect.
@@ -73,12 +76,15 @@ public abstract class SqlStore extends DataStore
 			{
 				driversLoaded = false;
 			}
+			
+			// TODO: Make sure this isn't still needed!
+			/*
 			if (!driversLoaded)
 			{
 				log.info("Persistence: Loading sqlite drivers from Persistence folder");
 				String fileName = getDriverFileName();
 				
-				File dataPath = dataFolder.getAbsoluteFile();
+				File dataPath = driverFolder.getAbsoluteFile();
 				File pluginsPath = new File(dataPath.getParent());
 				File cbPath = new File(pluginsPath.getParent());
 				File sqlLiteFile = new File(cbPath, "Persistence/" + fileName + ".jar");
@@ -119,7 +125,9 @@ public abstract class SqlStore extends DataStore
 					return false;
 				}
 			}
+					*/
 		}
+
 		// Create or connect to the database
 		
 		// TODO: user, password
@@ -455,11 +463,6 @@ public abstract class SqlStore extends DataStore
 		return (connection != null && !isClosed);
 	}
 
-	public void setDataFolder(File dataFolder)
-	{
-		this.dataFolder = dataFolder;
-	}
-
 	public static void logSqlStatement(String statement)
 	{
 		if (logSqlStatements)
@@ -470,7 +473,7 @@ public abstract class SqlStore extends DataStore
 	
 	protected static boolean logSqlStatements = false;
 	
-	protected File dataFolder = null;
+
 	protected Connection connection = null;
 	protected static boolean driversLoaded = false;
 }

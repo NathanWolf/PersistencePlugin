@@ -10,6 +10,12 @@ import com.elmakers.mine.bukkit.data.DataType;
 
 public class SqlLiteStore extends SqlStore
 {
+	public SqlLiteStore(String schema, File dataFolder)
+	{
+		super(schema);
+		this.dataFolder = dataFolder;
+	}
+	
 	@Override
 	public String getDriverClassName() { return "org.sqlite.JDBC"; }
 
@@ -99,5 +105,6 @@ public class SqlLiteStore extends SqlStore
 		
 		return currentTable;
 	}
-	
+
+	protected File dataFolder = null;
 }

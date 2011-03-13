@@ -10,7 +10,12 @@ import java.util.logging.Logger;
  *
  */
 public abstract class DataStore
-{
+{	
+	public DataStore(String schema)
+	{
+		this.schema = schema;
+	}
+	
 	/**
 	 * Connect to the data store represented by this store's schema
 	 * 
@@ -152,10 +157,10 @@ public abstract class DataStore
 	{
 		return log;
 	}
-	
-	protected static boolean logStoreAccess = false;
-	
-	protected String schema;
-	protected static Logger log = Logger.getLogger("Minecraft");
+
+	protected static boolean	logStoreAccess	= false;
+
+	protected String			schema;
+	protected static Logger		log				= Logger.getLogger("Minecraft");
 	
 }
