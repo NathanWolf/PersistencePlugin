@@ -77,8 +77,6 @@ public class PersistencePlugin extends JavaPlugin
 	{
 		if (persistence == null)
 		{
-			persistence = new Persistence(getServer());
-			
 			// Search for DataStore providers
 			PluginManager pm = this.getServer().getPluginManager();
 			Plugin[] plugins = pm.getPlugins();
@@ -102,6 +100,7 @@ public class PersistencePlugin extends JavaPlugin
 			}
 			else
 			{
+				persistence = new Persistence(getServer(), defaultProvider);
 				updateGlobalData();
 			}
 		}

@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import org.bukkit.Server;
 
 import com.elmakers.mine.bukkit.data.DataStore;
+import com.elmakers.mine.bukkit.data.DataStoreProvider;
 import com.elmakers.mine.bukkit.persisted.Migrate;
 import com.elmakers.mine.bukkit.persisted.PersistClass;
 import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassException;
@@ -31,9 +32,10 @@ public class Persistence implements com.elmakers.mine.bukkit.persisted.Persisten
 	 *  @see PersistencePlugin#getPersistence()
 	 *  @see Persistence#getInstance()
 	 */
-	public Persistence(Server server)
+	public Persistence(Server server, DataStoreProvider provider)
 	{
 		this.server = server;
+		this.provider = provider;
 	}
 	
 	/**
@@ -294,8 +296,7 @@ public class Persistence implements com.elmakers.mine.bukkit.persisted.Persisten
 		if (schema == null)
 		{
 			schemaName = schemaName.toLowerCase();
-			DataStore store = createStore();
-			store.initialize(schemaName);
+			DataStore store = createStore(schemaName);
 			schema = new Schema(schemaName, store);
 			schemaMap.put(schemaName, schema);
 		}
@@ -341,16 +342,9 @@ public class Persistence implements com.elmakers.mine.bukkit.persisted.Persisten
 	 * Protected members
 	 */
 	
-	protected DataStore createStore()
+	protected DataStore createStore(String schema)
 	{
-		// TODO!
-		/*
-		SqlLiteStore store = new SqlLiteStore();
-		store.setDataFolder(dataFolder);
-		return store;
-		*/
-		
-		return null;
+		return provider.createStore(schema);
 	}
 	
 	public void disconnect()
@@ -379,17 +373,18 @@ public class Persistence implements com.elmakers.mine.bukkit.persisted.Persisten
 	/*
 	 * private data
 	 */
-	private final Server server;
+	private final Server										server;
+	private final DataStoreProvider								provider;
+
+	private static boolean										allowOpsSUAccess	= true;
+
+	private static final Logger									log					= Logger.getLogger("Minecraft");
 	
-	private static boolean allowOpsSUAccess = true;
-	
-	private static final Logger log = Logger.getLogger("Minecraft");
-	
-	private final Map<Class<? extends Object>, PersistedClass> persistedClassMap = new ConcurrentHashMap<Class<? extends Object>, PersistedClass>(); 
-	private final Map<String, Schema> schemaMap = new ConcurrentHashMap<String, Schema>();
-	
+	private final Map<Class<? extends Object>, PersistedClass>	persistedClassMap	= new ConcurrentHashMap<Class<? extends Object>, PersistedClass>();
+	private final Map<String, Schema>							schemaMap			= new ConcurrentHashMap<String, Schema>();
+
 	// Locks for manual synchronization
-	
+
 	// Make sure that we don't create a persisted class twice at the same time
-	private static final Object classCreateLock = new Object();
+	private static final Object									classCreateLock		= new Object();
 }
