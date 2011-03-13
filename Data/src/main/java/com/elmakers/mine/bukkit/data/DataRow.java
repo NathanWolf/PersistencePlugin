@@ -1,11 +1,9 @@
-package com.elmakers.mine.craftbukkit.persistence.data;
+package com.elmakers.mine.bukkit.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
-
-import com.elmakers.mine.craftbukkit.persistence.Persistence;
 
 /**
  * Used to represent a single row of data from a data store.
@@ -115,7 +113,7 @@ public class DataRow
 	}
 	
 	protected DataTable table;
-	protected static Logger log = Persistence.getLogger();
+	protected static Logger log = DataStore.getLogger();
 	protected HashMap<String, DataField> fieldMap = new HashMap<String, DataField>();
 	protected List<DataField> fields = new ArrayList<DataField>();
 }

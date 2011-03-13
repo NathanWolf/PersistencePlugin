@@ -1,4 +1,4 @@
-package com.elmakers.mine.craftbukkit.persistence.data.sql;
+package com.elmakers.mine.bukkit.data.sql;
 
 import java.sql.Connection;
 import java.sql.Driver;

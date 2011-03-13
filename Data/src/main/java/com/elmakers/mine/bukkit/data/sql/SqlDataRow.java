@@ -1,12 +1,12 @@
-package com.elmakers.mine.craftbukkit.persistence.data.sql;
+package com.elmakers.mine.bukkit.data.sql;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-import com.elmakers.mine.craftbukkit.persistence.data.DataRow;
-import com.elmakers.mine.craftbukkit.persistence.data.DataTable;
-import com.elmakers.mine.craftbukkit.persistence.data.DataType;
+import com.elmakers.mine.bukkit.data.DataRow;
+import com.elmakers.mine.bukkit.data.DataTable;
+import com.elmakers.mine.bukkit.data.DataType;
 
 public class SqlDataRow extends DataRow
 {

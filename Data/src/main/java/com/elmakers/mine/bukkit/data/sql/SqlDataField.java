@@ -1,12 +1,12 @@
-package com.elmakers.mine.craftbukkit.persistence.data.sql;
+package com.elmakers.mine.bukkit.data.sql;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
-import com.elmakers.mine.craftbukkit.persistence.data.DataField;
-import com.elmakers.mine.craftbukkit.persistence.data.DataType;
+import com.elmakers.mine.bukkit.data.DataField;
+import com.elmakers.mine.bukkit.data.DataType;
 
 public class SqlDataField extends DataField
 {

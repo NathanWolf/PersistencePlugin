@@ -1,12 +1,7 @@
-package com.elmakers.mine.craftbukkit.persistence.data;
+package com.elmakers.mine.bukkit.data;
 
 import java.util.List;
 import java.util.logging.Logger;
-
-import com.elmakers.mine.bukkit.persistence.MigrationInfo;
-import com.elmakers.mine.bukkit.plugins.persistence.PersistencePlugin;
-import com.elmakers.mine.craftbukkit.persistence.Persistence;
-import com.elmakers.mine.craftbukkit.persistence.core.PersistedClass;
 
 /**
  * An abstract class representing a data store.
@@ -39,63 +34,6 @@ public abstract class DataStore
 	 * 
 	 */
 	public abstract boolean create(DataTable table);
-	
-	/**
-	 * Will create a table if it does not exist, and migrate data as
-	 * necessary if it does exist.
-	 * 
-	 * @param table The table definition. If this differs from the stored definition, data migration will occur.
-	 * @return true if success
-	 * @see #tableExists(DataTable)
-	 */
-	public boolean migrateEntity(DataTable table, PersistedClass entity)
-	{
-		if (!tableExists(table.getName())) 
-		{
-			create(table);
-			return true;
-		}
-		
-		// Migrate data
-		DataTable currentTable = getTableHeader(table.getName());
-		DataRow tableHeader = table.getHeader();
-		DataRow currentHeader = currentTable.getHeader();
-		if (tableHeader.isMigrationRequired(currentHeader))
-		{
-			MigrationInfo migrateInfo = entity.getMigrationInfo();
-			
-			// TODO: Support types other than auto reset
-			if (migrateInfo == null)
-			{
-				log.info("Persistence: Auto-migrating entity " + entity.getSchema() + "." + entity.getName());
-				
-				/* TODO!
-				String autoBackupTable = table.getName() + "_autoBackup";
-				if (tableExists(autoBackupTable))
-				{
-					drop(autoBackupTable);
-				}
-				currentTable.setName(autoBackupTable);
-				create(currentTable);
-				*/
-				drop(currentTable.getName());
-				create(table);
-			}
-			else
-			{
-				// Custom migration not supported- just dump error.
-				logMigrateError(entity.getSchemaName(), entity.getName());
-			}
-		}
-		
-		return true;
-	}
-	
-	protected void logMigrateError(String schema, String table)
-	{
-		log.warning("Persistence: Can't migrate entity " + schema + "." + table);
-		log.warning("             If you continue to have issues, please delete the table " +table + " in the " + schema + " database");		
-	}
 	
 	public void copyTable(String sourceTable, String destinationTable)
 	{
@@ -189,9 +127,8 @@ public abstract class DataStore
 	 * @param schema The schema this data store connects to
 	 * @param p The Persistence instance this data store should use.
 	 */
-	public void initialize(String schema, Persistence p)
+	public void initialize(String schema)
 	{
-		persistence = p;
 		this.schema = schema;
 	}
 	
@@ -211,7 +148,7 @@ public abstract class DataStore
 		}
 	}
 	
-	public static Logger getLog()
+	public static Logger getLogger()
 	{
 		return log;
 	}

@@ -1,7 +1,7 @@
 package com.elmakers.mine.bukkit.persistence.exception;
 
 import com.elmakers.mine.bukkit.persistence.EntityInfo;
-import com.elmakers.mine.craftbukkit.persistence.core.PersistedClass;
+import com.elmakers.mine.bukkit.persistence.PersistedClass;
 
 public class InvalidPersistedClassException extends Exception
 {

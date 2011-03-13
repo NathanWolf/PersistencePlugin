@@ -6,15 +6,23 @@ import java.util.logging.Logger;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.BlockVector;
 
 import com.elmakers.mine.bukkit.permission.GroupManager;
 import com.elmakers.mine.bukkit.permission.PermissionManager;
+import com.elmakers.mine.bukkit.persistence.CommandSenderData;
+import com.elmakers.mine.bukkit.persistence.EntityInfo;
+import com.elmakers.mine.bukkit.persistence.FieldInfo;
+import com.elmakers.mine.bukkit.persistence.PersistedClass;
 import com.elmakers.mine.bukkit.persistence.dao.PlayerData;
+import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassException;
 import com.elmakers.mine.bukkit.utilities.PluginUtilities;
 import com.elmakers.mine.craftbukkit.persistence.Persistence;
 
@@ -35,7 +43,6 @@ public class PersistencePlugin extends JavaPlugin
 	 */
 	public PersistencePlugin()
 	{
-		pluginInstance = this;
 	}
 	
 	/* Process player quit and join messages.
@@ -67,9 +74,68 @@ public class PersistencePlugin extends JavaPlugin
 	{
 		if (persistence == null)
 		{
-			persistence = Persistence.getInstance();
+			persistence = new Persistence(getServer, getDataFolder());
+			updateGlobalData();
 		}
 		return persistence;
+	}
+	
+
+	protected void updateGlobalData()
+	{
+		// Update CommandSenders
+		updateCommandSender("player" , Player.class);
+		
+		// Create BlockVector class
+		EntityInfo vectorInfo = new EntityInfo("global", "vector");
+		FieldInfo vectorId = new FieldInfo("id");
+		FieldInfo fieldX = new FieldInfo("x");
+		FieldInfo fieldY = new FieldInfo("y");
+		FieldInfo fieldZ = new FieldInfo("z");
+		
+		// Make the hash code the id, make it readonly, and override its storage name
+		vectorId.setIdField(true);
+		vectorId.setReadOnly(true);
+	
+		// Bind each field- this is a little awkward right now, due to the
+		// assymmetry (lack of setBlockX type setters).
+		fieldX.setGetter("getBlockX");
+		fieldY.setGetter("getBlockY");
+		fieldZ.setGetter("getBlockZ");
+		fieldX.setSetter("setX");
+		fieldY.setSetter("setY");
+		fieldZ.setSetter("setZ");
+		
+		// Create the class definition
+		PersistedClass persistVector = getPersistedClass(BlockVector.class, vectorInfo);
+		try
+		{
+			persistVector.persistField("hashCode", vectorId);
+	
+			persistVector.persistField("x", fieldX);
+			persistVector.persistField("y", fieldY);
+			persistVector.persistField("z", fieldZ);
+			
+			persistVector.validate();
+		}
+		catch (InvalidPersistedClassException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// TODO: Materials (? .. currently in Gameplay!)
+	}
+		
+	protected CommandSenderData updateCommandSender(String senderId, Class<?> senderClass)
+	{
+		CommandSenderData sender = get(senderId, CommandSenderData.class);
+		if (sender == null)
+		{
+			sender = new CommandSenderData(senderId, senderClass);
+			put(sender);
+		}		
+		return sender;
 	}
 
 	/*
@@ -126,19 +192,6 @@ public class PersistencePlugin extends JavaPlugin
 		return log;
 	}
 	
-	
-	/**
-	 * Retrieve the instance of this plugin that was created by Bukkit.
-	 * 
-	 * Used internally.
-	 * 
-	 * @return The instance of this plugin.
-	 */
-	public static PersistencePlugin getInstance()
-	{
-		return pluginInstance;
-	}	
-	
 	protected void initialize()
 	{
 		// Initialize permissions, if it hasn't been already
@@ -175,6 +228,23 @@ public class PersistencePlugin extends JavaPlugin
 			PlayerData.setPermissionHandler(permissions);
 		}
 		return permissions;
+	}
+	
+	/**
+	 * Retrieves a PluginUtilities interface for the specified plugin. 
+	 * 
+	 * Pass in your own plugin instance for access to data-driven in-game message strings and commands,
+	 * and other useful utilities.
+	 * 
+	 * @param plugin The plugin for which to retrieve messages and commands
+	 * @return A PluginUtilities instance for sending messages and processing commands
+	 */
+	public PluginUtilities getUtilities(Plugin plugin)
+	{
+		PluginUtilities utilities = new PluginUtilities(plugin, this);
+		// TODO: This should be temporary...
+		utilities.loadPermissions(PersistencePlugin.getInstance().getPermissions());
+		return utilities;
 	}
 	
 	/*

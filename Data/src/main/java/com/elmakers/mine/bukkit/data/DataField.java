@@ -1,6 +1,7 @@
-package com.elmakers.mine.craftbukkit.persistence.data;
+package com.elmakers.mine.bukkit.data;
 
 import java.util.logging.Logger;
+
 
 /**
  * Represents a single field in a data row.

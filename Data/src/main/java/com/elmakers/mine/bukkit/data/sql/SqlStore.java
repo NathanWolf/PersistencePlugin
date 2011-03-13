@@ -1,4 +1,4 @@
-package com.elmakers.mine.craftbukkit.persistence.data.sql;
+package com.elmakers.mine.bukkit.data.sql;
 
 import java.io.File;
 import java.sql.Connection;
@@ -9,11 +9,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.elmakers.mine.craftbukkit.persistence.data.DataField;
-import com.elmakers.mine.craftbukkit.persistence.data.DataRow;
-import com.elmakers.mine.craftbukkit.persistence.data.DataStore;
-import com.elmakers.mine.craftbukkit.persistence.data.DataTable;
-import com.elmakers.mine.craftbukkit.persistence.data.DataType;
+import com.elmakers.mine.bukkit.data.DataField;
+import com.elmakers.mine.bukkit.data.DataRow;
+import com.elmakers.mine.bukkit.data.DataStore;
+import com.elmakers.mine.bukkit.data.DataTable;
+import com.elmakers.mine.bukkit.data.DataType;
 
 /**
  * An abstract base clase for all JDBC-SQL-based stores.

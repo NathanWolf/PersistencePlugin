@@ -1,4 +1,4 @@
-package com.elmakers.mine.craftbukkit.persistence.data;
+package com.elmakers.mine.bukkit.data;
 
 import java.util.ArrayList;
 import java.util.List;

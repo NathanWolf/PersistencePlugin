@@ -1,12 +1,12 @@
-package com.elmakers.mine.craftbukkit.persistence.data.sql;
+package com.elmakers.mine.bukkit.data.sql;
 
 import java.io.File;
 import java.util.List;
 
-import com.elmakers.mine.craftbukkit.persistence.data.DataField;
-import com.elmakers.mine.craftbukkit.persistence.data.DataRow;
-import com.elmakers.mine.craftbukkit.persistence.data.DataTable;
-import com.elmakers.mine.craftbukkit.persistence.data.DataType;
+import com.elmakers.mine.bukkit.data.DataField;
+import com.elmakers.mine.bukkit.data.DataRow;
+import com.elmakers.mine.bukkit.data.DataTable;
+import com.elmakers.mine.bukkit.data.DataType;
 
 public class SqlLiteStore extends SqlStore
 {

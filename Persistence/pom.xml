@@ -28,8 +28,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-    	<groupId>com.elmakers.mine.bukkit.permissions</groupId>
-    	<artifactId>Permissions</artifactId>
+    	<groupId>com.elmakers.mine.bukkit.data</groupId>
+    	<artifactId>Data</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
     	<type>jar</type>
     	<scope>compile</scope>

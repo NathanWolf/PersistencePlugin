@@ -6,7 +6,6 @@ import java.util.List;
 import com.elmakers.mine.bukkit.persistence.annotation.Migrate;
 import com.elmakers.mine.bukkit.persistence.annotation.MigrateStep;
 import com.elmakers.mine.bukkit.persistence.dao.MigrationStep;
-import com.elmakers.mine.craftbukkit.persistence.core.PersistedClass;
 
 public class MigrationInfo
 {
