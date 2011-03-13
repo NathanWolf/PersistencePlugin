@@ -8,9 +8,9 @@ import com.elmakers.mine.bukkit.data.DataRow;
 import com.elmakers.mine.bukkit.data.DataTable;
 import com.elmakers.mine.bukkit.data.DataType;
 
-public class SqlLiteStore extends SqlStore
+public class SQLiteStore extends SqlStore
 {
-	public SqlLiteStore(String schema, File dataFolder)
+	public SQLiteStore(String schema, File dataFolder)
 	{
 		super(schema);
 		this.dataFolder = dataFolder;

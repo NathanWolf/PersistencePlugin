@@ -2,16 +2,16 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.elmakers.mine.bukkit.data.sqlite</groupId>
-  <artifactId>SQLiteData</artifactId>
+  <artifactId>SQLitePlugin</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>elMakers - Bukkit Plugins : SQLiteData</name>
+  <name>elMakers - Bukkit Plugins : SQLitePlugin</name>
   <url>http://mine.elmakers.com</url>
   <dependencyManagement>
   	<dependencies>
   	</dependencies>
   </dependencyManagement>
   <properties>
-  	<build.version>0.75</build.version>
+  	<build.version>0.10</build.version>
   </properties>
   <repositories>
     <repository>

@@ -2,6 +2,8 @@ package com.elmakers.mine.bukkit.plugins.persistence;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import org.bukkit.command.Command;
@@ -15,6 +17,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.BlockVector;
 
+import com.elmakers.mine.bukkit.data.DataStoreProvider;
 import com.elmakers.mine.bukkit.permission.GroupManager;
 import com.elmakers.mine.bukkit.permission.PermissionManager;
 import com.elmakers.mine.bukkit.persistence.EntityInfo;
@@ -76,14 +79,35 @@ public class PersistencePlugin extends JavaPlugin
 		{
 			persistence = new Persistence(getServer());
 			
-			// TODO: Load DataStore providers
+			// Search for DataStore providers
+			PluginManager pm = this.getServer().getPluginManager();
+			Plugin[] plugins = pm.getPlugins();
+			for (Plugin plugin : plugins)
+			{
+				if (plugin instanceof DataStoreProvider)
+				{
+					DataStoreProvider provider = (DataStoreProvider)plugin;
+					providers.put(provider.getType(), provider);
+					if (defaultProvider == null)
+					{
+						defaultProvider = provider;
+					}
+				}
+			}
 			
-			updateGlobalData();
+			if (defaultProvider == null)
+			{
+				log.severe("Persistence: No data store providers found!");
+				log.severe("Persistence: Please install a data store provider, such as SQLitePlugin.jar");
+			}
+			else
+			{
+				updateGlobalData();
+			}
 		}
 		return persistence;
 	}
 	
-
 	protected void updateGlobalData()
 	{
 		// Update CommandSenders
@@ -249,17 +273,18 @@ public class PersistencePlugin extends JavaPlugin
 		utilities.loadPermissions(getPermissions());
 		return utilities;
 	}
-	
+
 	/*
 	 * Private data
 	 */
 
-	private final PersistenceListener	listener		= new PersistenceListener();
-	private final PersistenceCommands	handler			= new PersistenceCommands();
-	private Persistence					persistence		= null;
-	private GroupManager				permissions		= null;
-	private PluginUtilities				utilities		= null;
-	private List<Object>				listeners 		= null;
-	private static final Logger			log				= Logger.getLogger("Minecraft");
-	
+	private final PersistenceListener		listener		= new PersistenceListener();
+	private final PersistenceCommands		handler			= new PersistenceCommands();
+	private Persistence						persistence		= null;
+	private GroupManager					permissions		= null;
+	private PluginUtilities					utilities		= null;
+	private List<Object>					listeners		= null;
+	private static final Logger				log				= Logger.getLogger("Minecraft");
+	private DataStoreProvider				defaultProvider	= null;
+	private Map<String, DataStoreProvider>	providers		= new ConcurrentHashMap<String, DataStoreProvider>();
 }

@@ -8,7 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.elmakers.mine.bukkit.data.DataStore;
 import com.elmakers.mine.bukkit.data.DataStoreProvider;
-import com.elmakers.mine.bukkit.data.sql.SqlLiteStore;
+import com.elmakers.mine.bukkit.data.sql.SQLiteStore;
 
 /** 
  * A plugin to add a SQLite DataStore provider to the Persistence plugin
@@ -69,7 +69,7 @@ public class SQLitePlugin extends JavaPlugin implements DataStoreProvider
 
 	public DataStore createStore(String schema)
 	{
-		return new SqlLiteStore(schema, dataFolder);
+		return new SQLiteStore(schema, dataFolder);
 	}
 	
 	protected File dataFolder = null;

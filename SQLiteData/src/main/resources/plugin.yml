@@ -1,0 +1,6 @@
+name: SQLite
+main: com.elmakers.mine.bukkit.plugins.sqlite.SQLitePlugin
+version: 0.10
+website: http://mine.elmakers.com
+author: NathanWolf
+description : SQLite support for Persistence DataStores
