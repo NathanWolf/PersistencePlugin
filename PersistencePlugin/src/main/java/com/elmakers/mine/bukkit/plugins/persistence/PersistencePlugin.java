@@ -1,5 +1,6 @@
 package com.elmakers.mine.bukkit.plugins.persistence;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.BlockVector;
 
 import com.elmakers.mine.bukkit.data.DataStoreProvider;
-import com.elmakers.mine.bukkit.permission.GroupManager;
+import com.elmakers.mine.bukkit.groups.GroupManager;
 import com.elmakers.mine.bukkit.permission.PermissionManager;
 import com.elmakers.mine.bukkit.persistence.EntityInfo;
 import com.elmakers.mine.bukkit.persistence.FieldInfo;
@@ -59,7 +60,7 @@ public class PersistencePlugin extends JavaPlugin
 		{
 			listeners = new ArrayList<Object>();
 			listeners.add(handler);
-			listeners.add(getPermissions());
+			listeners.add(getGroups());
 		}
 		return utilities.dispatch(listeners, sender, cmd.getName(), parameters);
 	}
@@ -220,8 +221,8 @@ public class PersistencePlugin extends JavaPlugin
 	
 	protected void initialize()
 	{
-		// Initialize permissions, if it hasn't been already
-		getPermissions();
+		// Initialize the groups manager, if it hasn't been already
+		getGroups();
 			
 		handler.initialize(this, getPersistence(), getUtilities());
 		listener.initialize(getPersistence(), handler);
@@ -236,7 +237,7 @@ public class PersistencePlugin extends JavaPlugin
 	{
 		if (utilities == null)
 		{
-			utilities = getUtilities(this);
+			utilities = createUtilities(this);
 		}
 		
 		return utilities;
@@ -246,14 +247,32 @@ public class PersistencePlugin extends JavaPlugin
 	{
 		if (permissions == null)
 		{
-			// TODO: This is messy, group manager relies on plugin utilities,
-			// which needs a permission manager.
-			// Hopefully all temporary!
-			permissions = new GroupManager(getServer(), getPersistence(), getUtilities(), getDataFolder());
-			permissions.initialize();
+			permissions = new PermissionManager(getServer(), getPersistence());
+			
+			
+			// TODO: This should be temporary...
+			// This emulates some missing PluginLoader functionality from the bukkit permissions branch
+			// It scans config.yml for permissions
+			PluginManager pm = getServer().getPluginManager();
+			Plugin[] plugins = pm.getPlugins();
+			for (Plugin plugin : plugins)
+			{
+				permissions.loadPluginPermissions(plugin);
+			}
+			
+			permissions.loadPermissions(new File(getDataFolder(), permissionsFile));
 			PlayerData.setPermissionHandler(permissions);
 		}
 		return permissions;
+	}
+
+	public GroupManager getGroups()
+	{
+		if (groups == null)
+		{
+			groups = new GroupManager(getServer(), getPersistence(), getUtilities(), getDataFolder());
+		}
+		return groups;
 	}
 	
 	/**
@@ -265,22 +284,23 @@ public class PersistencePlugin extends JavaPlugin
 	 * @param plugin The plugin for which to retrieve messages and commands
 	 * @return A PluginUtilities instance for sending messages and processing commands
 	 */
-	public PluginUtilities getUtilities(Plugin plugin)
+	public PluginUtilities createUtilities(Plugin plugin)
 	{
-		PluginUtilities utilities = new PluginUtilities(plugin, persistence);
-		// TODO: This should be temporary...
-		utilities.loadPermissions(getPermissions());
-		return utilities;
+		return new PluginUtilities(plugin, persistence);
 	}
 
 	/*
 	 * Private data
 	 */
 
+	// TOOD : support multiple perm files
+	private static final String				permissionsFile	= "permissions.yml";
+
 	private final PersistenceListener		listener		= new PersistenceListener();
 	private final PersistenceCommands		handler			= new PersistenceCommands();
 	private Persistence						persistence		= null;
-	private GroupManager					permissions		= null;
+	private PermissionManager				permissions		= null;
+	private GroupManager					groups			= null;
 	private PluginUtilities					utilities		= null;
 	private List<Object>					listeners		= null;
 	private static final Logger				log				= Logger.getLogger("Minecraft");

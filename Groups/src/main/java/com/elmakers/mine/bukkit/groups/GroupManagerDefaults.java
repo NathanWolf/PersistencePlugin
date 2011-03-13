@@ -1,4 +1,4 @@
-package com.elmakers.mine.bukkit.permission;
+package com.elmakers.mine.bukkit.groups;
 
 class GroupManagerDefaults
 {

@@ -1,38 +1,25 @@
-package com.elmakers.mine.bukkit.permission;
+package com.elmakers.mine.bukkit.groups;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
-import com.elmakers.mine.bukkit.persistence.Persistence;
+import com.elmakers.mine.bukkit.permission.dao.ProfileData;
+import com.elmakers.mine.bukkit.persisted.Persistence;
 import com.elmakers.mine.bukkit.persistence.dao.Group;
 import com.elmakers.mine.bukkit.persistence.dao.Message;
 import com.elmakers.mine.bukkit.persistence.dao.PlayerData;
 import com.elmakers.mine.bukkit.persistence.dao.PluginCommand;
-import com.elmakers.mine.bukkit.persistence.dao.ProfileData;
 import com.elmakers.mine.bukkit.utilities.PluginUtilities;
-import com.elmakers.mine.craftbukkit.permission.InvalidPermissionProfileException;
-import com.elmakers.mine.craftbukkit.permission.PermissionDescriptionNode;
-import com.elmakers.mine.craftbukkit.permission.PermissionProfile;
-import com.elmakers.mine.craftbukkit.permission.RootPermissionDescription;
 
-public class GroupManager implements PermissionManager, PermissionHandler
+public class GroupManager
 {
 	public GroupManager(Server server, Persistence persistence, PluginUtilities utilities, File dataFolder)
 	{
 		this.persistence = persistence;
 		this.server = server;
-		this.dataFolder = dataFolder;
 		this.utilities = utilities;
 		initialize();
 	}
@@ -75,29 +62,6 @@ public class GroupManager implements PermissionManager, PermissionHandler
 		denyGroupCommand.bind("onDenyGroupr");
 		grantPlayerCommand.bind("onGrantPlayer");
 		grantGroupCommand.bind("onGrantGroup");
-	}
-	
-	public void initializePermissions()
-	{		
-		if (permissionsInitialized) return;
-		permissionsInitialized = true;
-		
-		// Set up player profiles for permissions
-		FileReader loader = null;
-		try
-		{
-			loader = new FileReader(new File(dataFolder, permissionsFile));
-
-			if (!loadProfiles(loader, permissionsFile))
-			{
-				log.info("Persistence: There's an error with permissions.yml - hopefully more info about that above.");
-			}
-		}
-		catch(FileNotFoundException ex)
-		{
-			log.info("Persistence: Create a plugins/Persistence/" + permissionsFile + " to use internal permissions");
-			loader = null;
-		}
 	}
 
 	public boolean onCreateGroup(CommandSender messageOutput, String[] parameters)
@@ -322,148 +286,31 @@ public class GroupManager implements PermissionManager, PermissionHandler
 		
 		return true;
 	}
-	
-	protected boolean loadProfiles(Reader reader, String filename)
-	{
-		PermissionProfile[] profiles;
-		try
-		{
-			profiles = PermissionProfile.loadProfiles(this, server, reader);
-			log.info("Persistence: loaded " + profiles.length + " profiles from " + filename);
-			for (PermissionProfile profile : profiles)
-			{
-				String profileName = profile.getName();
-				if (profileName.equalsIgnoreCase("default"))
-				{
-					defaultProfile = profile;
-				}
-				ProfileData profileData = persistence.get(profileName, ProfileData.class);
-				if (profileData == null)
-				{
-					profileData = new ProfileData(profileName);
-					persistence.put(profileData);
-				}
-				
-				/// This is setting a transient instance
-				profileData.setProfile(profile);
-			}
-		}
-		catch (InvalidPermissionProfileException e)
-		{
-			log.info(e.getMessage());
-			return false;
-		}
-		
-		return true;
-	}
-	
-	public RootPermissionDescription getPermissionRoot(final String path)
-	{
-		String root = path.split("\\.", 2)[0];
-		return permissions.get(root);
-	}
 
-	public PermissionDescriptionNode getPermissionPath(final String path)
-	{
-		RootPermissionDescription root = getPermissionRoot(path);
+	protected final Persistence		persistence;
+	protected final Server			server;
+	protected final PluginUtilities	utilities;
 
-		/*
-		 * TODO: Add a path cache to avoid having to keep searching for nodes It
-		 * will be much more efficient. Need to invalidate the cache every time
-		 * a plugin changes one of the node descriptions though (not that they
-		 * should...)
-		 */
+	private PluginCommand			groupCommand;
+	private PluginCommand			groupCreateCommand;
+	private PluginCommand			groupRemoveCommand;
+	private PluginCommand			groupAddCommand;
+	private PluginCommand			denyCommand;
+	private PluginCommand			denyPlayerCommand;
+	private PluginCommand			denyGroupCommand;
+	private PluginCommand			grantCommand;
+	private PluginCommand			grantPlayerCommand;
+	private PluginCommand			grantGroupCommand;
 
-		if (root == null)
-		{
-			throw new IllegalArgumentException("No permissions are defined for " + path);
-		}
+	private Message					groupExistsMessage;
+	private Message					addedPlayerToGroupMessage;
+	private Message					removedPlayerFromGroupMessage;
+	private Message					createdGroupMessage;
+	private Message					denyAccessMessage;
+	private Message					grantAccessMessage;
+	private Message					playerNotFoundMessage;
+	private Message					unknownProfileMessage;
+	private Message					groupNotFoundMessage;
 
-		return root.getPath(path);
-	}
-	
-
-	public void addHandler(PermissionHandler handler)
-	{
-		permissionHandlers.add(handler);
-	}
-	
-	public void addPluginRootPermission(String pluginName, RootPermissionDescription rootNode)
-	{
-		if (permissions.get(pluginName) != null) return;
-	       	
-		if (rootNode != null)
-		{
-			String[] names = rootNode.getNames();
-			for (String name : names)
-			{
-				permissions.put(name, rootNode);
-			}
-		}
-	}
-	
-	public boolean isSet(Player player, String permissionNode)
-	{
-		if (defaultProfile != null)
-		{
-			if (defaultProfile.isSet(permissionNode))
-			{
-				return true;
-			}
-		}
-
-		for (RootPermissionDescription rootNodes : permissions.values())
-		{
-			if (rootNodes.isDefaultSet(permissionNode))
-			{
-				return true;
-			}
-		}
-		for (PermissionHandler subHandler : permissionHandlers)
-		{
-			if (subHandler.isSet(player, permissionNode))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private final Map<String, RootPermissionDescription> permissions = new HashMap<String, RootPermissionDescription>();
-	private final List<PermissionHandler> permissionHandlers = new ArrayList<PermissionHandler>();
-
-	protected final Persistence								persistence;
-	protected final Server									server;
-	protected final File									dataFolder;
-	protected final PluginUtilities							utilities;
-
-	protected PermissionProfile								defaultProfile			= null;
-
-	protected boolean										permissionsInitialized = false;
-
-	private PluginCommand									groupCommand;
-	private PluginCommand									groupCreateCommand;
-	private PluginCommand									groupRemoveCommand;
-	private PluginCommand									groupAddCommand;
-	private PluginCommand									denyCommand;
-	private PluginCommand									denyPlayerCommand;
-	private PluginCommand									denyGroupCommand;
-	private PluginCommand									grantCommand;
-	private PluginCommand									grantPlayerCommand;
-	private PluginCommand									grantGroupCommand;
-
-	private Message											groupExistsMessage;
-	private Message											addedPlayerToGroupMessage;
-	private Message											removedPlayerFromGroupMessage;
-	private Message											createdGroupMessage;
-	private Message											denyAccessMessage;
-	private Message											grantAccessMessage;
-	private Message											playerNotFoundMessage;
-	private Message											unknownProfileMessage;
-	private Message											groupNotFoundMessage;
-
-	protected static final Logger log = Persistence.getLogger();
-	
-	// TOOD : support multiple perm files
-	private static final String permissionsFile = "permissions.yml";
+	protected static final Logger	log	= Logger.getLogger("Minecraft");
 }

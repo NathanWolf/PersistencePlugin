@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.elmakers.mine.bukkit.permission.PermissionHandler;
+import com.elmakers.mine.bukkit.permission.dao.ProfileData;
 import com.elmakers.mine.bukkit.persisted.PersistClass;
 import com.elmakers.mine.bukkit.persisted.PersistField;
 import com.elmakers.mine.bukkit.persisted.Persisted;

@@ -42,8 +42,43 @@
     	<scope>compile</scope>
     </dependency>
     <dependency>
+    	<groupId>com.elmakers.mine.bukkit.gameplay</groupId>
+    	<artifactId>Gameplay</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.elmakers.mine.bukkit.utilities</groupId>
+    	<artifactId>Utilities</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.elmakers.mine.bukkit.persisted</groupId>
+    	<artifactId>Persisted</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.elmakers.mine.bukkit.permissions</groupId>
+    	<artifactId>Permissions</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
     	<groupId>com.elmakers.mine.bukkit.persistence.dao</groupId>
     	<artifactId>Globals</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.elmakers.mine.bukkit.data</groupId>
+    	<artifactId>Data</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
     	<type>jar</type>
     	<scope>compile</scope>

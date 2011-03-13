@@ -28,11 +28,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-    	<groupId>org.xerial</groupId>
-    	<artifactId>sqlite-jdbc</artifactId>
-    	<version>3.7.2</version>
+    	<groupId>com.elmakers.mine.bukkit.persisted</groupId>
+    	<artifactId>Persisted</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
     	<type>jar</type>
-    	<scope>compile</scope>
+    	<scope>provided</scope>
     </dependency>
   </dependencies>
   <!-- This builds a completely 'ready to start' jar with all dependencies inside -->

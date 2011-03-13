@@ -1,17 +1,9 @@
 package com.elmakers.mine.bukkit.utilities;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Server;
@@ -19,14 +11,9 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.InvalidDescriptionException;
-import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
 
-import com.elmakers.mine.bukkit.permission.PermissionManager;
 import com.elmakers.mine.bukkit.persistence.Persistence;
 import com.elmakers.mine.bukkit.persistence.dao.CommandSenderData;
 import com.elmakers.mine.bukkit.persistence.dao.Message;
@@ -35,9 +22,6 @@ import com.elmakers.mine.bukkit.persistence.dao.PlayerData;
 import com.elmakers.mine.bukkit.persistence.dao.PluginCommand;
 import com.elmakers.mine.bukkit.persistence.dao.PluginData;
 import com.elmakers.mine.bukkit.persistence.dao.WorldData;
-import com.elmakers.mine.craftbukkit.permission.PermissionDescriptionException;
-import com.elmakers.mine.craftbukkit.permission.PermissionDescriptionNodeException;
-import com.elmakers.mine.craftbukkit.permission.RootPermissionDescription;
 
 /** 
  * An interface for displaying data-driven messages and processing data-driven commands.
@@ -84,69 +68,6 @@ public class PluginUtilities
 		playerSender = persistence.get("player", CommandSenderData.class);
 	}
 	
-	public void loadPermissions(PermissionManager permissions)
-	{
-		File dataFolder = owner.getDataFolder();
-		String pluginName = dataFolder.getName();
-		File file = new File(dataFolder.getParentFile(), pluginName + ".jar");
-		try
-		{
-			if (!file.exists())
-			{
-				throw new InvalidPluginException(new FileNotFoundException(String.format("%s does not exist",
-						file.getPath())));
-			}
-			try
-			{
-				JarFile jar = new JarFile(file);
-				JarEntry entry = jar.getJarEntry("plugin.yml");
-
-				if (entry == null)
-				{
-					throw new InvalidPluginException(new FileNotFoundException("Jar does not contain plugin.yml"));
-				}
-
-				InputStream stream = jar.getInputStream(entry);
-				
-				@SuppressWarnings("unchecked")
-				Map<String, Object> map = (Map<String, Object>)yaml.load(stream);
-				if (map.containsKey("permissions"))
-				{
-					try
-					{
-						@SuppressWarnings("unchecked")
-						Map<String, Object> perms = (Map<String, Object>)map.get("permissions");
-						
-						RootPermissionDescription rootNode = new RootPermissionDescription(perms);
-						permissions.addPluginRootPermission(pluginName, rootNode);
-					}
-					catch (ClassCastException ex)
-					{
-						throw new InvalidDescriptionException(ex, "permissions are of wrong type");
-					}
-					catch (PermissionDescriptionException ex)
-					{
-						throw new InvalidDescriptionException(ex, "permissions are invalid");
-					}
-					catch (PermissionDescriptionNodeException ex)
-					{
-						throw new InvalidDescriptionException(ex, "permissions are invalid");
-					}
-				}
-
-				stream.close();
-				jar.close();
-			}
-			catch (IOException ex)
-			{
-				throw new InvalidPluginException(ex);
-			}
-		}
-		catch (Throwable ex)
-		{
-			log.log(Level.INFO, "Error reading plugin permissions: ", ex);
-		}
-	}
 	
 	public Plugin getOwningPlugin()
 	{
@@ -492,5 +413,4 @@ public class PluginUtilities
 	private PluginData			plugin;
 	private CommandSenderData	playerSender;
 	private static final Logger	log		= Persistence.getLogger();
-	private static final Yaml	yaml	= new Yaml(new SafeConstructor());
 }
