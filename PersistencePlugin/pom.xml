@@ -42,13 +42,6 @@
     	<scope>compile</scope>
     </dependency>
     <dependency>
-    	<groupId>com.elmakers.mine.bukkit.gameplay</groupId>
-    	<artifactId>Gameplay</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
-    </dependency>
-    <dependency>
     	<groupId>com.elmakers.mine.bukkit.utilities</groupId>
     	<artifactId>Utilities</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
