@@ -1,4 +1,4 @@
-package com.elmakers.mine.bukkit.gameplay;
+package com.elmakers.mine.bukkit.utilities;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;

@@ -11,14 +11,19 @@ import java.util.logging.Logger;
 
 import org.bukkit.Server;
 
+import com.elmakers.com.bukkit.data.exception.InvalidDataException;
 import com.elmakers.mine.bukkit.data.DataField;
 import com.elmakers.mine.bukkit.data.DataRow;
 import com.elmakers.mine.bukkit.data.DataStore;
 import com.elmakers.mine.bukkit.data.DataTable;
 import com.elmakers.mine.bukkit.data.DataType;
+import com.elmakers.mine.bukkit.persisted.CachedObject;
+import com.elmakers.mine.bukkit.persisted.EntityInfo;
+import com.elmakers.mine.bukkit.persisted.FieldInfo;
+import com.elmakers.mine.bukkit.persisted.MigrationInfo;
 import com.elmakers.mine.bukkit.persisted.PersistField;
 import com.elmakers.mine.bukkit.persisted.Persisted;
-import com.elmakers.mine.bukkit.persistence.exception.InvalidDataException;
+import com.elmakers.mine.bukkit.persisted.PersistedReference;
 import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassException;
 
 /**
@@ -627,7 +632,7 @@ public class PersistedClass implements com.elmakers.mine.bukkit.persisted.Persis
 			catch(Throwable e)
 			{
 				clear();
-				throw new InvalidDataException(this, e);
+				throw new InvalidDataException(e);
 			}
 		}
 	}

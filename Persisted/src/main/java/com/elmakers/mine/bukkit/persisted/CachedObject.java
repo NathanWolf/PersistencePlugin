@@ -1,6 +1,6 @@
-package com.elmakers.mine.bukkit.persistence;
+package com.elmakers.mine.bukkit.persisted;
 
-class CachedObject
+public class CachedObject
 {
 	private Object object;
 	private boolean cached;

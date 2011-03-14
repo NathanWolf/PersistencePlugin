@@ -1,10 +1,8 @@
-package com.elmakers.mine.bukkit.persistence;
+package com.elmakers.mine.bukkit.persisted;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.elmakers.mine.bukkit.persisted.Migrate;
-import com.elmakers.mine.bukkit.persisted.MigrateStep;
 import com.elmakers.mine.bukkit.persistence.dao.MigrationStep;
 
 public class MigrationInfo

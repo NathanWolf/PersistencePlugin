@@ -1,4 +1,4 @@
-package com.elmakers.mine.bukkit.persistence;
+package com.elmakers.mine.bukkit.persisted;
 
 public interface PersistedReference
 {

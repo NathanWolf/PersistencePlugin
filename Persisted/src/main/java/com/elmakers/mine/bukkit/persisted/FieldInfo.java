@@ -1,6 +1,5 @@
-package com.elmakers.mine.bukkit.persistence;
+package com.elmakers.mine.bukkit.persisted;
 
-import com.elmakers.mine.bukkit.persisted.PersistField;
 
 public class FieldInfo
 {

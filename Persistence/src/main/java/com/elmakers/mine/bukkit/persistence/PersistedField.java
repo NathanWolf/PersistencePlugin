@@ -5,11 +5,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
+import com.elmakers.com.bukkit.data.exception.InvalidDataException;
 import com.elmakers.mine.bukkit.data.DataField;
 import com.elmakers.mine.bukkit.data.DataRow;
 import com.elmakers.mine.bukkit.data.DataTable;
 import com.elmakers.mine.bukkit.data.DataType;
-import com.elmakers.mine.bukkit.persistence.exception.InvalidDataException;
+import com.elmakers.mine.bukkit.persisted.FieldInfo;
 import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassException;
 
 public class PersistedField
@@ -96,7 +97,7 @@ public class PersistedField
 
 		if (value == null && DataType.isPrimitive(getType()))
 		{
-			throw new InvalidDataException(owningClass, "Attempt to set null to primitive type for field " + getName());
+			throw new InvalidDataException("Attempt to set null to primitive type for field " + getName());
 		}
 
 		if (setter != null)
@@ -107,7 +108,7 @@ public class PersistedField
 			}
 			catch (Throwable e)
 			{
-				throw new InvalidDataException(owningClass, e);
+				throw new InvalidDataException(e);
 			}
 		}
 
@@ -119,7 +120,7 @@ public class PersistedField
 			}
 			catch (Throwable e)
 			{
-				throw new InvalidDataException(owningClass, e);
+				throw new InvalidDataException(e);
 			}
 		}
 		return true;

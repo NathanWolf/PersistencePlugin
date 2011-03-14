@@ -5,11 +5,13 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.elmakers.com.bukkit.data.exception.InvalidDataException;
 import com.elmakers.mine.bukkit.data.DataField;
 import com.elmakers.mine.bukkit.data.DataRow;
 import com.elmakers.mine.bukkit.data.DataTable;
 import com.elmakers.mine.bukkit.data.DataType;
-import com.elmakers.mine.bukkit.persistence.exception.InvalidDataException;
+import com.elmakers.mine.bukkit.persisted.FieldInfo;
+import com.elmakers.mine.bukkit.persisted.PersistedReference;
 import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassException;
 
 public class PersistedObject extends PersistedField implements PersistedReference

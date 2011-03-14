@@ -10,7 +10,9 @@ import org.bukkit.Server;
 
 import com.elmakers.mine.bukkit.data.DataStore;
 import com.elmakers.mine.bukkit.data.DataStoreProvider;
+import com.elmakers.mine.bukkit.persisted.EntityInfo;
 import com.elmakers.mine.bukkit.persisted.Migrate;
+import com.elmakers.mine.bukkit.persisted.MigrationInfo;
 import com.elmakers.mine.bukkit.persisted.PersistClass;
 import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassException;
 

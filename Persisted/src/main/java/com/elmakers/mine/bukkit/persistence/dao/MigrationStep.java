@@ -6,7 +6,7 @@ import com.elmakers.mine.bukkit.persisted.MigrateStep;
 import com.elmakers.mine.bukkit.persisted.PersistClass;
 import com.elmakers.mine.bukkit.persisted.PersistField;
 import com.elmakers.mine.bukkit.persisted.Persisted;
-import com.elmakers.mine.bukkit.persistence.PersistedClass;
+import com.elmakers.mine.bukkit.persisted.PersistedClass;
 
 @PersistClass(schema="global", name="migration")
 public class MigrationStep extends Persisted
@@ -52,8 +52,8 @@ public class MigrationStep extends Persisted
 		}
 		
 		
-		entity = entityClass.getName();
-		schema = entityClass.getSchemaName();
+		entity = entityClass.getEntityInfo().getName();
+		schema = entityClass.getEntityInfo().getSchema();
 	}
 	
 	/**

@@ -1,9 +1,8 @@
-package com.elmakers.mine.bukkit.persistence.exception;
+package com.elmakers.com.bukkit.data.exception;
 
 import com.elmakers.mine.bukkit.data.DataField;
 import com.elmakers.mine.bukkit.data.DataRow;
 import com.elmakers.mine.bukkit.data.DataTable;
-import com.elmakers.mine.bukkit.persistence.PersistedClass;
 
 public class InvalidDataException extends Exception
 {
@@ -61,24 +60,14 @@ public class InvalidDataException extends Exception
 		this.dataField = dataField;
 	}
 	
-	public InvalidDataException(PersistedClass persistedClass, Throwable cause)
+	public InvalidDataException(Throwable cause)
 	{
 		super(cause);
-		this.persistedClass = persistedClass;
 	}
 	
-	public InvalidDataException(PersistedClass persistedClass, String message)
+	public InvalidDataException(String message)
 	{
 		super(message);
-		this.persistedClass = persistedClass;
-	}
-	
-	public InvalidDataException(PersistedClass persistedClass, DataTable dataTable, DataRow dataRow, Throwable cause)
-	{
-		super(cause);
-		this.persistedClass = persistedClass;
-		this.dataTable = dataTable;
-		this.dataRow = dataRow;
 	}
 
 	public InvalidDataException(DataTable dataTable, DataRow dataRow, Throwable cause)
@@ -88,7 +77,6 @@ public class InvalidDataException extends Exception
 		this.dataRow = dataRow;
 	}
 
-	PersistedClass				persistedClass		= null;
 	DataField					dataField			= null;
 	DataTable					dataTable			= null;
 	DataRow						dataRow				= null;
