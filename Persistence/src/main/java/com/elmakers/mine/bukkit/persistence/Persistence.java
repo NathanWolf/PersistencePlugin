@@ -57,7 +57,7 @@ public class Persistence implements com.elmakers.mine.bukkit.persisted.Persisten
 	 */
 	public <T> void getAll(List<T> objects, Class<T> objectType)
 	{	
-		PersistedClass persistedClass = null;
+		PersistentClass persistedClass = null;
 		try
 		{
 			persistedClass = getPersistedClass(objectType);
@@ -80,7 +80,7 @@ public class Persistence implements com.elmakers.mine.bukkit.persisted.Persisten
 	 */
 	public void remove(Object removeObject)
 	{
-		PersistedClass persistedClass = null;
+		PersistentClass persistedClass = null;
 		try
 		{
 			persistedClass = getPersistedClass(removeObject.getClass());
@@ -103,7 +103,7 @@ public class Persistence implements com.elmakers.mine.bukkit.persisted.Persisten
 	 */
 	public <T> void putAll(List<T> objects, Class<T> objectType)
 	{
-		PersistedClass persistedClass = null;
+		PersistentClass persistedClass = null;
 		try
 		{
 			persistedClass = getPersistedClass(objectType);
@@ -127,7 +127,7 @@ public class Persistence implements com.elmakers.mine.bukkit.persisted.Persisten
 	@SuppressWarnings("unchecked")
 	public <T> T get(Object id, Class<T> objectType)
 	{
-		PersistedClass persistedClass = null;
+		PersistentClass persistedClass = null;
 		try
 		{
 			persistedClass = getPersistedClass(objectType);
@@ -154,7 +154,7 @@ public class Persistence implements com.elmakers.mine.bukkit.persisted.Persisten
 	{
 		if (persist == null) return false;
 		
-		PersistedClass persistedClass = null;
+		PersistentClass persistedClass = null;
 		try
 		{
 			persistedClass = getPersistedClass(persist.getClass());
@@ -184,7 +184,7 @@ public class Persistence implements com.elmakers.mine.bukkit.persisted.Persisten
 	 */
 	public void save()
 	{
-		for (PersistedClass persistedClass : persistedClassMap.values())
+		for (PersistentClass persistedClass : persistedClassMap.values())
 		{
 			persistedClass.save();
 		}
@@ -236,7 +236,7 @@ public class Persistence implements com.elmakers.mine.bukkit.persisted.Persisten
 	 * @param persistClass The annotated Class to persist
 	 * @return The persisted class definition, or null if failure
 	 */
-	public PersistedClass getPersistedClass(Class<? extends Object> persistClass)
+	public PersistentClass getPersistedClass(Class<? extends Object> persistClass)
 		throws InvalidPersistedClassException
 	{		
 		/*
@@ -245,7 +245,7 @@ public class Persistence implements com.elmakers.mine.bukkit.persisted.Persisten
 		
 		// TODO: Lookup from schema/name map ... hm... uh, how to do this without the annotation?
 		// I guess pass in one, and then other persisted classes can request data from their own schema...
-		PersistedClass persistedClass = persistedClassMap.get(persistClass);
+		PersistentClass persistedClass = persistedClassMap.get(persistClass);
 		if (persistedClass == null)
 		{
 			PersistClass entityAnnotation = persistClass.getAnnotation(PersistClass.class);
@@ -268,9 +268,9 @@ public class Persistence implements com.elmakers.mine.bukkit.persisted.Persisten
 		return persistedClass;
 	}
 	
-	protected PersistedClass createPersistedClass(Class<? extends Object> persistType, EntityInfo entityInfo) throws InvalidPersistedClassException
+	protected PersistentClass createPersistedClass(Class<? extends Object> persistType, EntityInfo entityInfo) throws InvalidPersistedClassException
 	{
-		PersistedClass persistedClass = new PersistedClass(this, entityInfo);
+		PersistentClass persistedClass = new PersistentClass(this, entityInfo);
 		if (!persistedClass.bind(persistType))
 		{
 			return null;
@@ -314,9 +314,9 @@ public class Persistence implements com.elmakers.mine.bukkit.persisted.Persisten
 	 * @param entityInfo Information on how to persist this class 
 	 * @return The persisted class definition, or null if failure
 	 */
-	public PersistedClass getPersistedClass(Class<? extends Object> persistType, EntityInfo entityInfo)
+	public PersistentClass getPersistedClass(Class<? extends Object> persistType, EntityInfo entityInfo)
 	{	
-		PersistedClass persistedClass = persistedClassMap.get(persistType);
+		PersistentClass persistedClass = persistedClassMap.get(persistType);
 		if (persistedClass == null)
 		{
 			// Lock now, to create an atomic checkCreate for class:
@@ -382,7 +382,7 @@ public class Persistence implements com.elmakers.mine.bukkit.persisted.Persisten
 
 	private static final Logger									log					= Logger.getLogger("Minecraft");
 	
-	private final Map<Class<? extends Object>, PersistedClass>	persistedClassMap	= new ConcurrentHashMap<Class<? extends Object>, PersistedClass>();
+	private final Map<Class<? extends Object>, PersistentClass>	persistedClassMap	= new ConcurrentHashMap<Class<? extends Object>, PersistentClass>();
 	private final Map<String, Schema>							schemaMap			= new ConcurrentHashMap<String, Schema>();
 
 	// Locks for manual synchronization

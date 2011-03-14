@@ -2,6 +2,8 @@ package com.elmakers.mine.bukkit.persisted;
 
 import java.util.List;
 
+import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassException;
+
 public interface Persistence
 {
 
@@ -80,4 +82,12 @@ public interface Persistence
 	 */
 	public abstract boolean put(Object persist);
 
+	/**
+	 * Retrieve or create a persisted class, using the annotations built into the class.
+	 * 
+	 * @param persistClass The annotated Class to persist
+	 * @return The persisted class definition, or null if failure
+	 */
+	public PersistedClass getPersistedClass(Class<? extends Object> persistClass) throws InvalidPersistedClassException;
+	
 }

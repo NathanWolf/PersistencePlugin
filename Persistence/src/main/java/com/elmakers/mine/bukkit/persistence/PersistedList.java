@@ -39,7 +39,7 @@ public class PersistedList extends PersistedField implements PersistedReference
 		{
 			try
 			{
-				referenceType = new PersistedClass(copy.referenceType, this);
+				referenceType = new PersistentClass(copy.referenceType, this);
 			}
 			catch (InvalidPersistedClassException e)
 			{
@@ -60,13 +60,13 @@ public class PersistedList extends PersistedField implements PersistedReference
 		return field;
 	}
 	
-	public PersistedList(FieldInfo fieldInfo, Field field, PersistedClass owningClass)
+	public PersistedList(FieldInfo fieldInfo, Field field, PersistentClass owningClass)
 	{
 		super(fieldInfo, field, owningClass);
 		findListType();
 	}
 	
-	public PersistedList(FieldInfo fieldInfo, Method getter, Method setter, PersistedClass owningClass)
+	public PersistedList(FieldInfo fieldInfo, Method getter, Method setter, PersistentClass owningClass)
 	{
 		super(fieldInfo, getter, setter, owningClass);
 		findListType();
@@ -91,7 +91,7 @@ public class PersistedList extends PersistedField implements PersistedReference
     		if (isContained())
     		{
     			// Create a sub-class of the reference class
-    			referenceType = new PersistedClass(referenceType, this);
+    			referenceType = new PersistentClass(referenceType, this);
     			referenceType.bindReferences();
     		}
     		else
@@ -125,7 +125,7 @@ public class PersistedList extends PersistedField implements PersistedReference
 		return listDataType == DataType.OBJECT;
 	}
 	
-	public PersistedClass getReferenceType()
+	public PersistentClass getReferenceType()
 	{
 		return referenceType;
 	}
@@ -425,5 +425,5 @@ public class PersistedList extends PersistedField implements PersistedReference
 	protected DataType listDataType;
 
 	// Only valid for Lists of Objects
-	protected PersistedClass referenceType = null;
+	protected PersistentClass referenceType = null;
 }

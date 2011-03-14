@@ -7,13 +7,13 @@ import com.elmakers.mine.bukkit.persisted.PersistClass;
 import com.elmakers.mine.bukkit.persisted.PersistField;
 import com.elmakers.mine.bukkit.persisted.Persisted;
 import com.elmakers.mine.bukkit.persisted.PersistedClass;
+import com.elmakers.mine.bukkit.persisted.Persistence;
 
 @PersistClass(schema="global", name="migration")
 public class MigrationStep extends Persisted
 {
-	public MigrationStep()
+	public MigrationStep(Persistence persistence)
 	{
-		
 	}
 	
 	public MigrationStep(PersistedClass entityClass, MigrateStep info)

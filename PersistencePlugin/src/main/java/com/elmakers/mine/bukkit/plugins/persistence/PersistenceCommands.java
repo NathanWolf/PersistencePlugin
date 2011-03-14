@@ -7,7 +7,7 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.elmakers.mine.bukkit.persistence.PersistedClass;
+import com.elmakers.mine.bukkit.persistence.PersistentClass;
 import com.elmakers.mine.bukkit.persistence.PersistedField;
 import com.elmakers.mine.bukkit.persistence.PersistedList;
 import com.elmakers.mine.bukkit.persistence.Persistence;
@@ -281,7 +281,7 @@ public class PersistenceCommands
 		return true;
 	}
 	
-	protected String listCompactEntity(PersistedClass type, Object instance)
+	protected String listCompactEntity(PersistentClass type, Object instance)
 	{
 		String output = " [";
 		boolean firstField = true;
@@ -290,7 +290,7 @@ public class PersistenceCommands
 			String fieldName = field.getName();
 			fieldName = padColumn(fieldName);
 			
-			PersistedClass refType = field.getReferenceType();			
+			PersistentClass refType = field.getReferenceType();			
 			String dataField = "null";
 			Object data = null;
 			if (instance != null)
@@ -323,7 +323,7 @@ public class PersistenceCommands
 	
 	protected void listEntity(CommandSender messageOutput, String schemaName, String entityName, String id)
 	{
-   		PersistedClass persisted = getEntity(messageOutput, schemaName, entityName);
+   		PersistentClass persisted = getEntity(messageOutput, schemaName, entityName);
 		if (persisted == null) return;
 		
 		Object instance = persisted.get(id);
@@ -341,7 +341,7 @@ public class PersistenceCommands
 			fieldName = padColumn(fieldName);
 			
 			Object data = field.get(instance);
-			PersistedClass refType = field.getReferenceType();
+			PersistentClass refType = field.getReferenceType();
 			boolean isList = (field instanceof PersistedList);
 			String dataField = "null";
 			
@@ -402,7 +402,7 @@ public class PersistenceCommands
 	
 	protected void listEntities(CommandSender messageOutput, String schemaName, String entityName)
 	{
-		PersistedClass persisted = getEntity(messageOutput, schemaName, entityName);
+		PersistentClass persisted = getEntity(messageOutput, schemaName, entityName);
 		if (persisted == null) return;
 		
 		String heading = "";
@@ -467,7 +467,7 @@ public class PersistenceCommands
 	
 	protected void listEntityIds(CommandSender messageOutput, String schemaName, String entityName)
 	{
-		PersistedClass persisted = getEntity(messageOutput, schemaName, entityName);
+		PersistentClass persisted = getEntity(messageOutput, schemaName, entityName);
 		if (persisted == null) return;
 		
 		List<Object> entities = new ArrayList<Object>();
@@ -528,7 +528,7 @@ public class PersistenceCommands
 		}
 	}
 	
-	protected PersistedClass getEntity(CommandSender messageOutput, String schemaName, String entityName)
+	protected PersistentClass getEntity(CommandSender messageOutput, String schemaName, String entityName)
 	{
 		Schema schema = persistence.getSchema(schemaName);
 		if (schema == null)
@@ -536,7 +536,7 @@ public class PersistenceCommands
 			unknownSchemaMessage.sendTo(messageOutput, schemaName);
 			return null;
 		}
-		PersistedClass persisted = schema.getPersistedClass(entityName);
+		PersistentClass persisted = schema.getPersistedClass(entityName);
 		if (persisted == null)
 		{
 			unknownEntityMessage.sendTo(messageOutput, schemaName, entityName);
@@ -554,7 +554,7 @@ public class PersistenceCommands
 			return;
 		}		
 		schemaDisplayMessage.sendTo(messageOutput, schemaName);
-		for (PersistedClass persisted : schema.getPersistedClasses())
+		for (PersistentClass persisted : schema.getPersistedClasses())
 		{
 			String schemaMessage = " " + persisted.getTableName();
 			messageOutput.sendMessage(schemaMessage);
@@ -563,7 +563,7 @@ public class PersistenceCommands
 
 	protected void describeEntity(CommandSender messageOutput, String schemaName, String entityName)
 	{
-		PersistedClass persisted = getEntity(messageOutput, schemaName, entityName);
+		PersistentClass persisted = getEntity(messageOutput, schemaName, entityName);
 		if (persisted == null) return;
 		
 		entityDisplayMessage.sendTo(messageOutput, schemaName, entityName);
@@ -576,7 +576,7 @@ public class PersistenceCommands
 	
 	protected void reloadEntity(CommandSender messageOutput, String schemaName, String entityName)
 	{
-		PersistedClass persisted = getEntity(messageOutput, schemaName, entityName);
+		PersistentClass persisted = getEntity(messageOutput, schemaName, entityName);
 		if (persisted == null) return;
 		
 		reloadingEntityMessage.sendTo(messageOutput, schemaName, entityName);
@@ -585,7 +585,7 @@ public class PersistenceCommands
 	
 	protected void resetEntity(CommandSender messageOutput, String schemaName, String entityName)
 	{
-		PersistedClass persisted = getEntity(messageOutput, schemaName, entityName);
+		PersistentClass persisted = getEntity(messageOutput, schemaName, entityName);
 		if (persisted == null) return;
 		
 		resettingEntityMessage.sendTo(messageOutput, schemaName, entityName);

@@ -25,7 +25,7 @@ public class PersistedField
 		this.owningClass = copy.owningClass;
 	}
 
-	protected PersistedField(FieldInfo fieldInfo, Method getter, Method setter, PersistedClass owningClass)
+	protected PersistedField(FieldInfo fieldInfo, Method getter, Method setter, PersistentClass owningClass)
 	{
 		this.name = fieldInfo.getName();
 		if (name == null || name.length() == 0)
@@ -39,7 +39,7 @@ public class PersistedField
 		this.owningClass = owningClass;
 	}
 
-	protected PersistedField(FieldInfo fieldInfo, Field field, PersistedClass owningClass)
+	protected PersistedField(FieldInfo fieldInfo, Field field, PersistentClass owningClass)
 	{
 		this.name = fieldInfo.getName();
 		if (name == null || name.length() == 0)
@@ -163,7 +163,7 @@ public class PersistedField
 		return result;
 	}
 
-	public PersistedClass getReferenceType()
+	public PersistentClass getReferenceType()
 	{
 		return null;
 	}
@@ -171,7 +171,7 @@ public class PersistedField
 	public PersistedField getConcreteField()
 	{
 		PersistedField concrete = this;
-		PersistedClass reference = this.getReferenceType();
+		PersistentClass reference = this.getReferenceType();
 		if (reference != null)
 		{
 			concrete = reference.getConcreteIdField();
@@ -245,7 +245,7 @@ public class PersistedField
 		return DataType.getTypeFromClass(fieldType);
 	}
 
-	protected static PersistedField tryCreate(FieldInfo fieldInfo, Field field, PersistedClass owningClass)
+	protected static PersistedField tryCreate(FieldInfo fieldInfo, Field field, PersistentClass owningClass)
 	{
 		DataType dataType = DataType.getTypeFromClass(field.getType());
 		PersistedField pField = null;
@@ -266,7 +266,7 @@ public class PersistedField
 		return pField;
 	}
 
-	protected static PersistedField tryCreate(FieldInfo fieldInfo, Method getterOrSetter, PersistedClass owningClass)
+	protected static PersistedField tryCreate(FieldInfo fieldInfo, Method getterOrSetter, PersistentClass owningClass)
 	{
 		Method setter = null;
 		Method getter = null;
@@ -533,7 +533,7 @@ public class PersistedField
 		return field;
 	}
 
-	protected final PersistedClass	owningClass;
+	protected final PersistentClass	owningClass;
 	protected PersistedField		container	= null;
 	protected Method				getter		= null;
 	protected Method				setter		= null;

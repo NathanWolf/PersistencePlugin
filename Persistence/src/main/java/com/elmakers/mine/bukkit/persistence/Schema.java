@@ -32,18 +32,18 @@ public class Schema
 		this.name = name;
 	}
 	
-	public void addPersistedClass(PersistedClass persistedClass)
+	public void addPersistedClass(PersistentClass persistedClass)
 	{
 		persistedClasses.add(persistedClass);
 		nameMap.put(persistedClass.getTableName(), persistedClass);
 	}
 	
-	public List<PersistedClass> getPersistedClasses()
+	public List<PersistentClass> getPersistedClasses()
 	{
 		return persistedClasses;
 	}
 	
-	public PersistedClass getPersistedClass(String className)
+	public PersistentClass getPersistedClass(String className)
 	{
 		return nameMap.get(className);
 	}
@@ -63,6 +63,6 @@ public class Schema
 
 	private String									name;
 	private DataStore								defaultStore;
-	private final List<PersistedClass>				persistedClasses	= new ArrayList<PersistedClass>();
-	private final HashMap<String, PersistedClass>	nameMap				= new HashMap<String, PersistedClass>();
+	private final List<PersistentClass>				persistedClasses	= new ArrayList<PersistentClass>();
+	private final HashMap<String, PersistentClass>	nameMap				= new HashMap<String, PersistentClass>();
 }

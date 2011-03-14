@@ -22,7 +22,7 @@ import com.elmakers.mine.bukkit.persisted.EntityInfo;
 import com.elmakers.mine.bukkit.persisted.FieldInfo;
 import com.elmakers.mine.bukkit.persisted.MigrationInfo;
 import com.elmakers.mine.bukkit.persisted.PersistField;
-import com.elmakers.mine.bukkit.persisted.Persisted;
+import com.elmakers.mine.bukkit.persisted.PersistedClass;
 import com.elmakers.mine.bukkit.persisted.PersistedReference;
 import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassException;
 
@@ -38,15 +38,15 @@ import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassExcep
  * @author NathanWolf
  *
  */
-public class PersistedClass implements com.elmakers.mine.bukkit.persisted.PersistedClass
+public class PersistentClass implements PersistedClass
 {
-	public PersistedClass(Persistence persistence, EntityInfo entityInfo)
+	public PersistentClass(Persistence persistence, EntityInfo entityInfo)
 	{
 		this.entityInfo = entityInfo;
 		this.persistence = persistence;
 	}
 	
-	public PersistedClass(PersistedClass copy, PersistedField container) throws InvalidPersistedClassException
+	public PersistentClass(PersistentClass copy, PersistedField container) throws InvalidPersistedClassException
 	{
 		this.persistence = copy.persistence;
 		this.contained = true;
@@ -774,7 +774,6 @@ public class PersistedClass implements com.elmakers.mine.bukkit.persisted.Persis
 		try
 		{
 			newObject = persistClass.newInstance();
-			updatePersisted(newObject);
 			load(row, newObject);
 		}
 		catch (IllegalAccessException ex)
@@ -785,7 +784,6 @@ public class PersistedClass implements com.elmakers.mine.bukkit.persisted.Persis
 		{
 			throw new InvalidDataException(row.getTable(), row, ex);	
 		}
-		
 		return newObject;
 	}
 
@@ -854,24 +852,9 @@ public class PersistedClass implements com.elmakers.mine.bukkit.persisted.Persis
 	{
 		return addToCache(o, null);
 	}
-	
-	protected boolean updatePersisted(Object o)
-	{
-		if (o instanceof Persisted)
-		{
-			Persisted persisted = (Persisted)o;
-			persisted.setPersistedClass(this);
-			return true;
-		}
-		
-		return false;
-	}
-	
+
 	protected CachedObject addToCache(Object o, Object concreteId)
 	{
-		// First, make sure any Persisted class data is up to date
-		updatePersisted(o);
-		
 		// Handle autogen ids
 		// 0 (and lower) are "magic numbers" signifying that there is no auto
 		// id set, and we need to generate one.

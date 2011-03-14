@@ -24,7 +24,7 @@ public class PersistedObject extends PersistedField implements PersistedReferenc
 		{
 			try
 			{
-				referenceType = new PersistedClass(copy.referenceType, this);
+				referenceType = new PersistentClass(copy.referenceType, this);
 			}
 			catch (InvalidPersistedClassException e)
 			{
@@ -44,12 +44,12 @@ public class PersistedObject extends PersistedField implements PersistedReferenc
 		return field;
 	}
 
-	public PersistedObject(FieldInfo fieldInfo, Field field, PersistedClass owningClass)
+	public PersistedObject(FieldInfo fieldInfo, Field field, PersistentClass owningClass)
 	{
 		super(fieldInfo, field, owningClass);
 	}
 	
-	public PersistedObject(FieldInfo fieldInfo, Method getter, Method setter, PersistedClass owningClass)
+	public PersistedObject(FieldInfo fieldInfo, Method getter, Method setter, PersistentClass owningClass)
 	{
 		super(fieldInfo, getter, setter, owningClass);
 	}
@@ -76,7 +76,7 @@ public class PersistedObject extends PersistedField implements PersistedReferenc
 		if (isContained() || referenceType.hasContainer())
 		{
 			// Create a sub-class of the reference class
-			referenceType = new PersistedClass(referenceType, this);
+			referenceType = new PersistentClass(referenceType, this);
 			referenceType.bindReferences();
 		}
 		else
@@ -257,7 +257,7 @@ public class PersistedObject extends PersistedField implements PersistedReferenc
 		return true;
 	}
 	
-	public PersistedClass getReferenceType()
+	public PersistentClass getReferenceType()
 	{
 		return referenceType;
 	}
@@ -265,5 +265,5 @@ public class PersistedObject extends PersistedField implements PersistedReferenc
 	private static int deferStackDepth = 0;
 	private final static List<DeferredReference> deferredReferences = new ArrayList<DeferredReference>();
 
-	protected PersistedClass referenceType = null;
+	protected PersistentClass referenceType = null;
 }

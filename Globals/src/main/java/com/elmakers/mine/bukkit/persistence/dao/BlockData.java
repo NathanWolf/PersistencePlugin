@@ -14,13 +14,14 @@ import com.elmakers.mine.bukkit.persisted.Persisted;
 @PersistClass(schema="global", name="block")
 public class BlockData extends Persisted
 {
-	public BlockData()
+	public BlockData(Persistence persistence)
 	{
-		
+		super(persistence);
 	}
 	
 	public BlockData(Block block)
 	{
+		super(block.getWorld().)
 		this.block = block;
 		
 		location = new LocationData(block.getWorld(), block.getX(), block.getY(), block.getZ());

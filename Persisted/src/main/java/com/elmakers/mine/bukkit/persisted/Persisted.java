@@ -1,5 +1,12 @@
 package com.elmakers.mine.bukkit.persisted;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bukkit.Server;
+
+import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassException;
+
 /**
  * This is an (optional) common base class for all persisted classes.
  * 
@@ -10,7 +17,22 @@ package com.elmakers.mine.bukkit.persisted;
  */
 public class Persisted implements Cloneable
 {
-
+	public Persisted()
+	{
+		try
+		{
+			persistedClass = persistence.getPersistedClass(getClass());
+			if (persistedClass == null)
+			{
+				throw new InvalidPersistedClassException(getClass(), "Failed to initialize");
+			}
+		}
+		catch (InvalidPersistedClassException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
     /**
      * Generate a hash id based on the hash id of this 
      * object's concrete (data) id.
@@ -45,10 +67,13 @@ public class Persisted implements Cloneable
     	return persistedClass.getPersistence();
     }
     
-	public void setPersistedClass(PersistedClass owningClass)
-	{
-		this.persistedClass = owningClass;
-	}
-    
-	protected PersistedClass	persistedClass = null;
+    public static void setPersistence(Server server, Persistence persistence)
+    {
+    	Persisted.persistence = persistence;
+    }
+
+	protected PersistedClass		persistedClass	= null;
+
+	// TODO: Support one Persistence instance per server
+	protected static Persistence	persistence		= null;
 }

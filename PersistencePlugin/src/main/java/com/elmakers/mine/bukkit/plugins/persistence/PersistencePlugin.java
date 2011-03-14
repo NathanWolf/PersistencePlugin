@@ -23,7 +23,8 @@ import com.elmakers.mine.bukkit.groups.GroupManager;
 import com.elmakers.mine.bukkit.permission.PermissionManager;
 import com.elmakers.mine.bukkit.persisted.EntityInfo;
 import com.elmakers.mine.bukkit.persisted.FieldInfo;
-import com.elmakers.mine.bukkit.persistence.PersistedClass;
+import com.elmakers.mine.bukkit.persisted.Persisted;
+import com.elmakers.mine.bukkit.persistence.PersistentClass;
 import com.elmakers.mine.bukkit.persistence.Persistence;
 import com.elmakers.mine.bukkit.persistence.dao.CommandSenderData;
 import com.elmakers.mine.bukkit.persistence.dao.PlayerData;
@@ -102,6 +103,7 @@ public class PersistencePlugin extends JavaPlugin
 			else
 			{
 				persistence = new Persistence(getServer(), defaultProvider);
+				Persisted.setPersistence(getServer(), persistence);
 				updateGlobalData();
 			}
 		}
@@ -134,7 +136,7 @@ public class PersistencePlugin extends JavaPlugin
 		fieldZ.setSetter("setZ");
 		
 		// Create the class definition
-		PersistedClass persistVector = persistence.getPersistedClass(BlockVector.class, vectorInfo);
+		PersistentClass persistVector = persistence.getPersistedClass(BlockVector.class, vectorInfo);
 		try
 		{
 			persistVector.persistField("hashCode", vectorId);
@@ -221,8 +223,9 @@ public class PersistencePlugin extends JavaPlugin
 	
 	protected void initialize()
 	{
-		// Initialize the groups manager, if it hasn't been already
+		// Initialize the groups and permission managers, if they aren't alrady
 		getGroups();
+		getPermissions();
 			
 		handler.initialize(this, getPersistence(), getUtilities());
 		listener.initialize(getPersistence(), handler);
@@ -248,7 +251,6 @@ public class PersistencePlugin extends JavaPlugin
 		if (permissions == null)
 		{
 			permissions = new PermissionManager(getServer(), getPersistence());
-			
 			
 			// TODO: This should be temporary...
 			// This emulates some missing PluginLoader functionality from the bukkit permissions branch
@@ -293,12 +295,14 @@ public class PersistencePlugin extends JavaPlugin
 	 * Private data
 	 */
 
-	// TOOD : support multiple perm files
+	// TODO : Use Persistence.persistenceMap to track one persistence instance per server
+	private Persistence						persistence		= null;
+	
+	// TODO : support multiple perm files
 	private static final String				permissionsFile	= "permissions.yml";
 
 	private final PersistenceListener		listener		= new PersistenceListener();
 	private final PersistenceCommands		handler			= new PersistenceCommands();
-	private Persistence						persistence		= null;
 	private PermissionManager				permissions		= null;
 	private GroupManager					groups			= null;
 	private PluginUtilities					utilities		= null;
