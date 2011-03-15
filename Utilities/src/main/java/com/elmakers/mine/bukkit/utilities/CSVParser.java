@@ -9,7 +9,7 @@ import com.elmakers.mine.bukkit.persistence.dao.MaterialList;
 
 public class CSVParser
 {
-	public static MaterialList parseMaterials(String csvList)
+	public MaterialList parseMaterials(String csvList)
 	{
 		MaterialList materials = new MaterialList();
 		
@@ -29,7 +29,7 @@ public class CSVParser
 		return materials;
 	}
 	
-	public static List<Integer> parseIntegers(String csvList)
+	public List<Integer> parseIntegers(String csvList)
 	{
 		List<Integer> ints = new ArrayList<Integer>();
 		

@@ -20,6 +20,11 @@ public class WorldData extends Persisted
 		
 	}
 	
+	public WorldData(World world)
+	{
+		update(world);
+	}
+	
 	public WorldData(String name, Environment type)
 	{
 		this.name = name;

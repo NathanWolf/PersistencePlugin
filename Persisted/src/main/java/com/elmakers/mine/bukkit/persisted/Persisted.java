@@ -1,8 +1,5 @@
 package com.elmakers.mine.bukkit.persisted;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.bukkit.Server;
 
 import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassException;

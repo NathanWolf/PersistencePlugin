@@ -90,9 +90,29 @@ public class PluginUtilities
 		return playerData;
 	}
 	
-	public WorldData getWorld(Server server, String name, Environment defaultType)
+	public WorldData getWorld(Server server, String name)
 	{
 		WorldData data = persistence.get(name, WorldData.class);
+		if (data == null)
+		{
+			List<World> worlds = server.getWorlds();
+			for (World world : worlds)
+			{
+				if (world.getName().equalsIgnoreCase(name))
+				{
+					data = new WorldData(name, world.getEnvironment());
+					persistence.put(data);
+				}
+				break;
+			}
+		}
+		
+		return data;
+	}
+	
+	public WorldData loadWorld(Server server, String name, Environment defaultType)
+	{
+		WorldData data = getWorld(server, name);
 		if (data == null)
 		{
 			data = new WorldData(name, defaultType);
@@ -107,8 +127,7 @@ public class PluginUtilities
 		WorldData data = persistence.get(world.getName(), WorldData.class);
 		if (data == null)
 		{
-			data = new WorldData();
-			data.update(world);
+			data = new WorldData(world);
 			persistence.put(data);
 		}
 		else
