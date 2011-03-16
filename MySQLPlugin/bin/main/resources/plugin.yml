@@ -1,0 +1,6 @@
+name: MySQL
+main: com.elmakers.mine.bukkit.plugins.sqlite.MySQLPlugin
+version: 0.10
+website: http://mine.elmakers.com
+author: NathanWolf
+description : MySQL support for Persistence DataStores

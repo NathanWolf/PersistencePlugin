@@ -1,6 +1,5 @@
 package com.elmakers.mine.bukkit.data.sql;
 
-import java.io.File;
 import java.util.List;
 
 import com.elmakers.mine.bukkit.data.DataField;
@@ -8,25 +7,27 @@ import com.elmakers.mine.bukkit.data.DataRow;
 import com.elmakers.mine.bukkit.data.DataTable;
 import com.elmakers.mine.bukkit.data.DataType;
 
-public class SQLiteStore extends SqlStore
+public class MySQLStore extends SqlStore
 {
-	public SQLiteStore(String schema, File dataFolder)
+	public MySQLStore(String schema, String server, String user, String password)
 	{
 		super(schema);
-		this.dataFolder = dataFolder;
+		this.server = server;
+		this.user = user;
+		this.password = password;
 	}
 	
 	@Override
-	public String getDriverClassName() { return "org.sqlite.JDBC"; }
+	public String getDriverClassName() { return "com.mysql.jdbc.Driver"; }
 	
 	@Override
+	// TODO: mysql master table? How to query for schema info in mysql?
 	public String getMasterTableName() { return "sqlite_master"; }
 	
 	@Override
 	public String getConnectionString(String schema, String user, String password) 
 	{ 
-		File sqlLiteFile = new File(dataFolder, schema + ".db");
-		return "jdbc:sqlite:" + sqlLiteFile.getAbsolutePath();
+		return "jdbc:mysql://" + server +"/" + schema + "?user=" + user + "&password=" + password;
 	}
 	
 	@Override
@@ -103,5 +104,7 @@ public class SQLiteStore extends SqlStore
 		return currentTable;
 	}
 
-	protected File dataFolder = null;
+	protected String	server		= null;
+	protected String	user		= null;
+	protected String	password	= null;
 }

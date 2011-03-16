@@ -1,4 +1,4 @@
-package com.elmakers.mine.bukkit.plugins.sqlite;
+package com.elmakers.mine.bukkit.plugins.mysql;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -8,7 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.elmakers.mine.bukkit.data.DataStore;
 import com.elmakers.mine.bukkit.data.DataStoreProvider;
-import com.elmakers.mine.bukkit.data.sql.SQLiteStore;
+import com.elmakers.mine.bukkit.data.sql.MySQLStore;
 
 /** 
  * A plugin to add a SQLite DataStore provider to the Persistence plugin
@@ -16,7 +16,7 @@ import com.elmakers.mine.bukkit.data.sql.SQLiteStore;
  * @author NathanWolf
  *
  */
-public class SQLitePlugin extends JavaPlugin implements DataStoreProvider
+public class MySQLPlugin extends JavaPlugin implements DataStoreProvider
 {
 	/*
 	 * Public API
@@ -56,6 +56,17 @@ public class SQLitePlugin extends JavaPlugin implements DataStoreProvider
 	{
 		File dataFolder = getDataFolder();
 		dataFolder.mkdirs();
-		return new SQLiteStore(schema, dataFolder);
+		return new MySQLStore(schema, user, server, password);
 	}
+	
+	public void intialize()
+	{
+		server = "localhost";
+		user = "test";
+		password = "test";
+	}
+	
+	protected String	server		= null;
+	protected String	user		= null;
+	protected String	password	= null;
 }

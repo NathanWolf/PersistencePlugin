@@ -22,7 +22,6 @@ import com.elmakers.mine.bukkit.data.DataType;
 public abstract class SqlStore extends DataStore
 {
 	public abstract String getDriverClassName();
-	public abstract String getDriverFileName();
 	public abstract String getMasterTableName();
 	public abstract String getConnectionString(String schema, String user, String password);
 	public abstract String getTypeName(DataType dataType);
@@ -76,56 +75,6 @@ public abstract class SqlStore extends DataStore
 			{
 				driversLoaded = false;
 			}
-			
-			// TODO: Make sure this isn't still needed!
-			/*
-			if (!driversLoaded)
-			{
-				log.info("Persistence: Loading sqlite drivers from Persistence folder");
-				String fileName = getDriverFileName();
-				
-				File dataPath = driverFolder.getAbsoluteFile();
-				File pluginsPath = new File(dataPath.getParent());
-				File cbPath = new File(pluginsPath.getParent());
-				File sqlLiteFile = new File(cbPath, "Persistence/" + fileName + ".jar");
-	            if (!sqlLiteFile.exists()) 
-	            {
-	                log.severe("Persistence: Failed to find sql driver: plugins/Persistence/" + fileName + ".jar");
-	                return false;
-	            }
-	            
-	            try 
-	            {
-	        		Driver d = (Driver)Class.forName(jdbcClass).newInstance();
-	        		DriverManager.registerDriver(new PersistenceJDBCDriver(d));
-	        		driversLoaded = true;
-	            } 
-	            catch (IllegalAccessException ex) 
-	            {
-	            	connection = null;
-	                log.severe("Persistence: Illegal Access Exception while loading sql drivers");
-	                return false;
-	            }
-	            catch (InstantiationException ex) 
-	            {
-	            	connection = null;
-	                log.severe("Persistence: Instantiation Exception while loading sql drivers");
-	                return false;
-	            }
-				catch (ClassNotFoundException e1)
-				{
-					connection = null;
-					log.severe("Persistence: JDBC class not found in sql jar");
-					return false;
-				}
-				catch(SQLException e)
-				{
-					connection = null;
-					log.severe("Permissions: SQL errors loading sqllite drivers: " + e.getMessage());
-					return false;
-				}
-			}
-					*/
 		}
 
 		// Create or connect to the database
