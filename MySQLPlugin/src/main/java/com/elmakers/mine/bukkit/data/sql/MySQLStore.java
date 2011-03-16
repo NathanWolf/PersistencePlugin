@@ -21,8 +21,7 @@ public class MySQLStore extends SqlStore
 	public String getDriverClassName() { return "com.mysql.jdbc.Driver"; }
 	
 	@Override
-	// TODO: mysql master table? How to query for schema info in mysql?
-	public String getMasterTableName() { return "sqlite_master"; }
+	public String getMasterTableName() { return "information_schema.tables"; }
 	
 	@Override
 	public String getConnectionString(String schema, String user, String password) 
