@@ -11,9 +11,13 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface MigrateStep
 {
-	String					id();
-	String					pluginVersion() default "";
-	String					script() default "";
-	String					statement() default "";
-	boolean					reset() default false;
+    String id();
+
+    String pluginVersion() default "";
+
+    boolean reset() default false;
+
+    String script() default "";
+
+    String statement() default "";
 }

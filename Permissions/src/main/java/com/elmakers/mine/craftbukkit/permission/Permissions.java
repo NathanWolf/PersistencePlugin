@@ -6,9 +6,11 @@
 package com.elmakers.mine.craftbukkit.permission;
 
 /**
- * Represents a structure which may contain permissions, such as a profile or a user
+ * Represents a structure which may contain permissions, such as a profile or a
+ * user
  */
-public interface Permissions {
+public interface Permissions
+{
     <T> T get(final String key);
 
     boolean isSet(final String key);

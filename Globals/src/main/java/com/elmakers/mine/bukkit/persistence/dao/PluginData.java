@@ -10,195 +10,207 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import com.elmakers.mine.bukkit.persisted.PersistClass;
 import com.elmakers.mine.bukkit.persisted.PersistField;
 import com.elmakers.mine.bukkit.persisted.Persisted;
+
 /**
  * A class to encapsulate data for a plugin.
  * 
  * Each plugin can register any number of messages and commands.
  * 
  * @author NathanWolf
- *
+ * 
  */
-@PersistClass(schema="global", name="plugin")
+@PersistClass(schema = "global", name = "plugin")
 public class PluginData extends Persisted
 {
 
-	public PluginData()
-	{
-	}
-	
-	public PluginData(Plugin plugin)
-	{
-		update(plugin);
-	}
-	
-	public void update(Plugin plugin)
-	{
-		PluginDescriptionFile pdfFile = plugin.getDescription();
-		id = pdfFile.getName();
-		version = pdfFile.getVersion();
-		description = pdfFile.getDescription();
-		authors = new ArrayList<String>();
-		if (authors == null) 
-		{
-			authors = new ArrayList<String>();
-		}
-		authors.addAll(pdfFile.getAuthors());
-		website = pdfFile.getWebsite();
-	}
-	
-	public void initializeCache(List<Message> allMessages, List<PluginCommand> allCommands)
-	{
-		for (Message message : allMessages)
-		{
-			if (message.getPlugin().getId().equalsIgnoreCase(id))
-			{
-				messageMap.put(message.getMessageId(), message);
-				messages.add(message);
-			}
-		}
-		
-		// Only cache root commands- the rest are in tree form
-		for (PluginCommand command : allCommands)
-		{
-			if (command.getParent() == null && command.getPlugin().getId().equalsIgnoreCase(id))
-			{
-				commandMap.put(command.getCommand(), command);
-				commands.add(command);
-			}
-		}
-	}
-	
-	public Message getMessage(String messageId, String defaultValue)
-	{
-		// First, look up existing message
-		Message message = messageMap.get(messageId);
-		if (message != null) return message;
-		
-		// Create a new message
-		message = new Message(this, messageId, defaultValue);
-		messageMap.put(messageId, message);
-		messages.add(message);
+    protected List<String>                   authors;
 
-		getPersistence().put(message);
-		return message;
-	}
-	
-	public PluginCommand getCommand(String commandName, String defaultTooltip, String defaultUsage, CommandSenderData sender, PermissionType pType)
-	{
-		// First, look for a root command by this name-
-		// command map only holds root commands!
-		PluginCommand command = commandMap.get(commandName);
-		if (command != null) 
-		{
-			command.setPermissionType(pType);
-			List<CommandSenderData> senders = command.getSenders();
-			if (sender != null)
-			{
-				if (senders == null)
-				{
-					senders = new ArrayList<CommandSenderData>();
-				}
-				if (!senders.contains(sender))
-				{
-					senders.add(sender);
-					command.setSenders(senders);
-				}
-			}
-			return command;
-		}
-		
-		// Create a new un-parented command
-		command = new PluginCommand(this, commandName, defaultTooltip, pType);
-		command.addUsage(defaultUsage);
-		
-		if (sender != null)
-		{
-			command.addSender(sender);
-		}
+    protected HashMap<String, PluginCommand> commandMap = new HashMap<String, PluginCommand>();
 
-		getPersistence().put(command);
-		commandMap.put(commandName, command);
-		commands.add(command);
-		
-		return command;
-	}
-	
-	@PersistField
-	public String getVersion()
-	{
-		return version;
-	}
+    protected List<PluginCommand>            commands   = new ArrayList<PluginCommand>();
 
-	public void setVersion(String version)
-	{
-		this.version = version;
-	}
+    protected String                         description;
 
-	@PersistField
-	public String getDescription()
-	{
-		return description;
-	}
+    protected String                         id;
 
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
+    // Command / message cache- transient
+    protected HashMap<String, Message>       messageMap = new HashMap<String, Message>();
 
-	@PersistField
-	public List<String> getAuthors()
-	{
-		return authors;
-	}
+    protected List<Message>                  messages   = new ArrayList<Message>();
 
-	public void setAuthors(List<String> authors)
-	{
-		this.authors = authors;
-	}
+    protected String                         version;
 
-	@PersistField
-	public String getWebsite()
-	{
-		return website;
-	}
+    protected String                         website;
 
-	public void setWebsite(String website)
-	{
-		this.website = website;
-	}
+    public PluginData()
+    {
+    }
 
-	@PersistField(id=true)
-	public String getId()
-	{
-		return id;
-	}
+    public PluginData(Plugin plugin)
+    {
+        update(plugin);
+    }
 
-	public void setId(String id)
-	{
-		this.id = id;
-	}
-	
-	
-	// Transient accessors for cache map
-	public List<PluginCommand> getCommands()
-	{
-		return commands;
-	}
+    @PersistField
+    public List<String> getAuthors()
+    {
+        return authors;
+    }
 
-	public List<Message> getMessages()
-	{
-		return messages;
-	}
+    public PluginCommand getCommand(String commandName, String defaultTooltip,
+            String defaultUsage, CommandSenderData sender, PermissionType pType)
+    {
+        // First, look for a root command by this name-
+        // command map only holds root commands!
+        PluginCommand command = commandMap.get(commandName);
+        if (command != null)
+        {
+            command.setPermissionType(pType);
+            List<CommandSenderData> senders = command.getSenders();
+            if (sender != null)
+            {
+                if (senders == null)
+                {
+                    senders = new ArrayList<CommandSenderData>();
+                }
+                if (!senders.contains(sender))
+                {
+                    senders.add(sender);
+                    command.setSenders(senders);
+                }
+            }
+            return command;
+        }
 
-	protected String			id;
-	protected String			version;
-	protected String			description;
-	protected List<String>		authors;
-	protected String			website;
-	
-	// Command / message cache- transient
-	protected HashMap<String, Message> messageMap = new HashMap<String, Message>();
-	protected HashMap<String, PluginCommand> commandMap = new HashMap<String, PluginCommand>();
-	protected List<PluginCommand>	commands = new ArrayList<PluginCommand>();
-	protected List<Message>			messages = new ArrayList<Message>();
+        // Create a new un-parented command
+        command = new PluginCommand(this, commandName, defaultTooltip, pType);
+        command.addUsage(defaultUsage);
+
+        if (sender != null)
+        {
+            command.addSender(sender);
+        }
+
+        getPersistence().put(command);
+        commandMap.put(commandName, command);
+        commands.add(command);
+
+        return command;
+    }
+
+    // Transient accessors for cache map
+    public List<PluginCommand> getCommands()
+    {
+        return commands;
+    }
+
+    @PersistField
+    public String getDescription()
+    {
+        return description;
+    }
+
+    @PersistField(id = true)
+    public String getId()
+    {
+        return id;
+    }
+
+    public Message getMessage(String messageId, String defaultValue)
+    {
+        // First, look up existing message
+        Message message = messageMap.get(messageId);
+        if (message != null)
+        {
+            return message;
+        }
+
+        // Create a new message
+        message = new Message(this, messageId, defaultValue);
+        messageMap.put(messageId, message);
+        messages.add(message);
+
+        getPersistence().put(message);
+        return message;
+    }
+
+    public List<Message> getMessages()
+    {
+        return messages;
+    }
+
+    @PersistField
+    public String getVersion()
+    {
+        return version;
+    }
+
+    @PersistField
+    public String getWebsite()
+    {
+        return website;
+    }
+
+    public void initializeCache(List<Message> allMessages,
+            List<PluginCommand> allCommands)
+    {
+        for (Message message : allMessages)
+        {
+            if (message.getPlugin().getId().equalsIgnoreCase(id))
+            {
+                messageMap.put(message.getMessageId(), message);
+                messages.add(message);
+            }
+        }
+
+        // Only cache root commands- the rest are in tree form
+        for (PluginCommand command : allCommands)
+        {
+            if (command.getParent() == null && command.getPlugin().getId().equalsIgnoreCase(id))
+            {
+                commandMap.put(command.getCommand(), command);
+                commands.add(command);
+            }
+        }
+    }
+
+    public void setAuthors(List<String> authors)
+    {
+        this.authors = authors;
+    }
+
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+
+    public void setId(String id)
+    {
+        this.id = id;
+    }
+
+    public void setVersion(String version)
+    {
+        this.version = version;
+    }
+
+    public void setWebsite(String website)
+    {
+        this.website = website;
+    }
+
+    public void update(Plugin plugin)
+    {
+        PluginDescriptionFile pdfFile = plugin.getDescription();
+        id = pdfFile.getName();
+        version = pdfFile.getVersion();
+        description = pdfFile.getDescription();
+        authors = new ArrayList<String>();
+        if (authors == null)
+        {
+            authors = new ArrayList<String>();
+        }
+        authors.addAll(pdfFile.getAuthors());
+        website = pdfFile.getWebsite();
+    }
 }

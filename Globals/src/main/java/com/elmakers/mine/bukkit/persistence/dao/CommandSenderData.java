@@ -9,67 +9,71 @@ import com.elmakers.mine.bukkit.persisted.Persisted;
  * 
  * This entity is pre-populated, currently only "generic" and "player" present.
  * 
- * Use of this class is currently hard-coded, so it would not be advised to add or
- * modify this data.
+ * Use of this class is currently hard-coded, so it would not be advised to add
+ * or modify this data.
  * 
  * @author nathan
- *
+ * 
  */
-@PersistClass(name="sender", schema="global")
+@PersistClass(name = "sender", schema = "global")
 public class CommandSenderData extends Persisted
 {
-	public CommandSenderData()
-	{
-		
-	}
-	
-	public CommandSenderData(String id, Class<?> senderClass)
-	{
-		this.id = id;
-		if (senderClass != null)
-		{
-			this.className = senderClass.getName();
-		}
-	}
-	
-	public Class<?> getType()
-	{
-		if (className == null || className.length() == 0) return null;
-		Class<?> senderType = null;
-		try
-		{
-			senderType = Class.forName(className);
-		}
-		catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-			senderType = null;
-		}
-		return senderType;
-	}
-	
-	@PersistField(id=true)
-	public String getId()
-	{
-		return id;
-	}
+    protected String className;
 
-	public void setId(String id)
-	{
-		this.id = id;
-	}
-	
-	@PersistField
-	public String getClassName()
-	{
-		return className;
-	}
+    protected String id;
 
-	public void setClassName(String className)
-	{
-		this.className = className;
-	}
+    public CommandSenderData()
+    {
 
-	protected String id;
-	protected String className;
+    }
+
+    public CommandSenderData(String id, Class<?> senderClass)
+    {
+        this.id = id;
+        if (senderClass != null)
+        {
+            this.className = senderClass.getName();
+        }
+    }
+
+    @PersistField
+    public String getClassName()
+    {
+        return className;
+    }
+
+    @PersistField(id = true)
+    public String getId()
+    {
+        return id;
+    }
+
+    public Class<?> getType()
+    {
+        if (className == null || className.length() == 0)
+        {
+            return null;
+        }
+        Class<?> senderType = null;
+        try
+        {
+            senderType = Class.forName(className);
+        }
+        catch (ClassNotFoundException e)
+        {
+            e.printStackTrace();
+            senderType = null;
+        }
+        return senderType;
+    }
+
+    public void setClassName(String className)
+    {
+        this.className = className;
+    }
+
+    public void setId(String id)
+    {
+        this.id = id;
+    }
 }

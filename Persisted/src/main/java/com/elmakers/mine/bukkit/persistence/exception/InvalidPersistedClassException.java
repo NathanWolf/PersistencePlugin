@@ -5,70 +5,74 @@ import com.elmakers.mine.bukkit.persisted.PersistedClass;
 
 public class InvalidPersistedClassException extends Exception
 {
-	public PersistedClass getPersistedClass()
-	{
-		return persistedClass;
-	}
+    /**
+     * Need to support Serializable via Exception
+     */
+    private static final long       serialVersionUID = 1L;
 
-	public EntityInfo getEntityInfo()
-	{
-		return entityInfo;
-	}
+    private EntityInfo              entityInfo       = null;
 
-	public Class<? extends Object> getPersistedType()
-	{
-		return persistedType;
-	}
+    private PersistedClass          persistedClass   = null;
 
-	public InvalidPersistedClassException(PersistedClass persistedClass)
-	{
-		this.persistedClass = persistedClass;
-		if (persistedClass != null)
-		{
-			this.entityInfo = persistedClass.getEntityInfo();
-			this.persistedType = persistedClass.getType();
-		}
-	}
-	
-	public InvalidPersistedClassException(Class<? extends Object> persistedType)
-	{
-		this.persistedType = persistedType;
-	}
-	
-	public InvalidPersistedClassException(Class<? extends Object> persistedType, String message)
-	{
-		super(message);
-		this.persistedType = persistedType;
-	}
-	
-	public InvalidPersistedClassException(EntityInfo entityInfo)
-	{
-		this.entityInfo = entityInfo;
-	}
-	
-	public InvalidPersistedClassException(PersistedClass persistedClass, String message)
-	{
-		super(message);
-		this.persistedClass = persistedClass;
-		if (persistedClass != null)
-		{
-			this.entityInfo = persistedClass.getEntityInfo();
-			this.persistedType = persistedClass.getType();
-		}
-	}
-	
-	public InvalidPersistedClassException(EntityInfo entityInfo, String message)
-	{
-		super(message);
-		this.entityInfo = entityInfo;
-	}
+    private Class<? extends Object> persistedType    = null;
 
-	private PersistedClass			persistedClass		= null;
-	private EntityInfo				entityInfo			= null;
-	private Class<? extends Object>	persistedType		= null;				
+    public InvalidPersistedClassException(Class<? extends Object> persistedType)
+    {
+        this.persistedType = persistedType;
+    }
 
-	/**
-	 * Need to support Serializable via Exception
-	 */
-	private static final long	serialVersionUID	= 1L;
+    public InvalidPersistedClassException(
+            Class<? extends Object> persistedType, String message)
+    {
+        super(message);
+        this.persistedType = persistedType;
+    }
+
+    public InvalidPersistedClassException(EntityInfo entityInfo)
+    {
+        this.entityInfo = entityInfo;
+    }
+
+    public InvalidPersistedClassException(EntityInfo entityInfo, String message)
+    {
+        super(message);
+        this.entityInfo = entityInfo;
+    }
+
+    public InvalidPersistedClassException(PersistedClass persistedClass)
+    {
+        this.persistedClass = persistedClass;
+        if (persistedClass != null)
+        {
+            this.entityInfo = persistedClass.getEntityInfo();
+            this.persistedType = persistedClass.getType();
+        }
+    }
+
+    public InvalidPersistedClassException(PersistedClass persistedClass,
+            String message)
+    {
+        super(message);
+        this.persistedClass = persistedClass;
+        if (persistedClass != null)
+        {
+            this.entityInfo = persistedClass.getEntityInfo();
+            this.persistedType = persistedClass.getType();
+        }
+    }
+
+    public EntityInfo getEntityInfo()
+    {
+        return entityInfo;
+    }
+
+    public PersistedClass getPersistedClass()
+    {
+        return persistedClass;
+    }
+
+    public Class<? extends Object> getPersistedType()
+    {
+        return persistedType;
+    }
 }

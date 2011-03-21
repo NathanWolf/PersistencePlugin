@@ -4,9 +4,13 @@ import org.bukkit.Server;
 
 public interface PersistedClass
 {
-	public Object getIdData(Object o);
-	public Server getServer();
-	public Persistence getPersistence();
-	public Class<? extends Object> getType();
-	public EntityInfo getEntityInfo();
+    public EntityInfo getEntityInfo();
+
+    public Object getIdData(Object o);
+
+    public Persistence getPersistence();
+
+    public Server getServer();
+
+    public Class<? extends Object> getType();
 }

@@ -10,63 +10,67 @@ import com.elmakers.mine.bukkit.data.DataStore;
 import com.elmakers.mine.bukkit.data.DataStoreProvider;
 import com.elmakers.mine.bukkit.data.sql.MySQLStore;
 
-/** 
+/**
  * A plugin to add a SQLite DataStore provider to the Persistence plugin
  * 
  * @author NathanWolf
- *
+ * 
  */
 public class MySQLPlugin extends JavaPlugin implements DataStoreProvider
 {
-	/*
-	 * Public API
-	 */
+    /*
+     * Public API
+     */
 
-	/*
-	 * Plugin interface
-	 */
+    /*
+     * Plugin interface
+     */
 
-	/* TODO
-	 * 
-	 * @see org.bukkit.plugin.Plugin#onDisable()
-	 */
-	public void onDisable()
-	{
-		
-	}
+    private static final Logger log      = Logger.getLogger("Minecraft");
 
-	/* Initialize this plugin
-	 * 
-	 * @see org.bukkit.plugin.Plugin#onEnable()
-	 */
-	public void onEnable()
-	{
-		PluginDescriptionFile pdfFile = this.getDescription();
-		log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled");
-	}
+    protected String            password = null;
 
-	private static final Logger	log	= Logger.getLogger("Minecraft");
+    protected String            server   = null;
 
-	public String getType()
-	{
-		return "sqlite";
-	}
+    protected String            user     = null;
 
-	public DataStore createStore(String schema)
-	{
-		File dataFolder = getDataFolder();
-		dataFolder.mkdirs();
-		return new MySQLStore(schema, user, server, password);
-	}
-	
-	public void intialize()
-	{
-		server = "localhost";
-		user = "test";
-		password = "test";
-	}
-	
-	protected String	server		= null;
-	protected String	user		= null;
-	protected String	password	= null;
+    public DataStore createStore(String schema)
+    {
+        File dataFolder = getDataFolder();
+        dataFolder.mkdirs();
+        return new MySQLStore(schema, user, server, password);
+    }
+
+    public String getType()
+    {
+        return "sqlite";
+    }
+
+    public void intialize()
+    {
+        server = "localhost";
+        user = "test";
+        password = "test";
+    }
+
+    /*
+     * TODO
+     * 
+     * @see org.bukkit.plugin.Plugin#onDisable()
+     */
+    public void onDisable()
+    {
+
+    }
+
+    /*
+     * Initialize this plugin
+     * 
+     * @see org.bukkit.plugin.Plugin#onEnable()
+     */
+    public void onEnable()
+    {
+        PluginDescriptionFile pdfFile = this.getDescription();
+        log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled");
+    }
 }
