@@ -2,6 +2,7 @@ package com.elmakers.mine.bukkit.persistence.dao;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
 
 import com.elmakers.mine.bukkit.persisted.PersistClass;
 import com.elmakers.mine.bukkit.persisted.PersistField;
@@ -17,8 +18,7 @@ import com.elmakers.mine.bukkit.persisted.Persisted;
 @PersistClass(schema = "global", name = "material")
 public class MaterialData extends Persisted
 {
-    protected byte     data;
-
+    protected short     data;
     protected Material type;
 
     public MaterialData()
@@ -30,6 +30,15 @@ public class MaterialData extends Persisted
     {
         this.type = block.getType();
         this.data = block.getData();
+    }
+    
+    public MaterialData(ItemStack stack)
+    {
+        if (stack != null)
+        {
+            this.data = (byte)stack.getDurability();
+            this.type = stack.getType();
+        }
     }
 
     public MaterialData(Material mat)
@@ -44,16 +53,37 @@ public class MaterialData extends Persisted
         this.data = data;
     }
 
-    @PersistField
-    public byte getData()
-    {
-        return data;
-    }
 
     @PersistField
     public Material getType()
     {
         return type;
+    }
+
+    public void setType(Material type)
+    {
+        this.type = type;
+    }
+    
+    @PersistField
+    public byte getData()
+    {
+        return (byte)data;
+    }
+    
+    public void setData(byte data)
+    {
+        this.data = data;
+    }
+    
+    public void setDurability(short durability)
+    {
+        this.data = durability;
+    }
+
+    public short getDurability()
+    {
+        return data;
     }
 
     /**
@@ -66,16 +96,6 @@ public class MaterialData extends Persisted
     public int hashCode()
     {
         int materialHash = type.hashCode();
-        return materialHash << 8 | data;
-    }
-
-    public void setData(byte data)
-    {
-        this.data = data;
-    }
-
-    public void setType(Material type)
-    {
-        this.type = type;
+        return (materialHash << 8) | (data & 0xFF);
     }
 }

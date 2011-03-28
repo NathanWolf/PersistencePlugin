@@ -24,23 +24,17 @@ public class PluginData extends Persisted
 {
 
     protected List<String>                   authors;
-
-    protected HashMap<String, PluginCommand> commandMap = new HashMap<String, PluginCommand>();
-
-    protected List<PluginCommand>            commands   = new ArrayList<PluginCommand>();
-
+    protected List<MaterialList>             materials;
     protected String                         description;
-
     protected String                         id;
-
-    // Command / message cache- transient
-    protected HashMap<String, Message>       messageMap = new HashMap<String, Message>();
-
-    protected List<Message>                  messages   = new ArrayList<Message>();
-
     protected String                         version;
-
     protected String                         website;
+    
+    // Command / message cache- transient
+    protected HashMap<String, PluginCommand> commandMap = new HashMap<String, PluginCommand>();
+    protected List<PluginCommand>            commands   = new ArrayList<PluginCommand>();
+    protected HashMap<String, Message>       messageMap = new HashMap<String, Message>();
+    protected List<Message>                  messages   = new ArrayList<Message>();
 
     public PluginData()
     {
@@ -56,53 +50,18 @@ public class PluginData extends Persisted
     {
         return authors;
     }
-
-    public PluginCommand getCommand(String commandName, String defaultTooltip,
-            String defaultUsage, CommandSenderData sender, PermissionType pType)
+    
+    @PersistField
+    public List<MaterialList> getMaterials()
     {
-        // First, look for a root command by this name-
-        // command map only holds root commands!
-        PluginCommand command = commandMap.get(commandName);
-        if (command != null)
-        {
-            command.setPermissionType(pType);
-            List<CommandSenderData> senders = command.getSenders();
-            if (sender != null)
-            {
-                if (senders == null)
-                {
-                    senders = new ArrayList<CommandSenderData>();
-                }
-                if (!senders.contains(sender))
-                {
-                    senders.add(sender);
-                    command.setSenders(senders);
-                }
-            }
-            return command;
-        }
-
-        // Create a new un-parented command
-        command = new PluginCommand(this, commandName, defaultTooltip, pType);
-        command.addUsage(defaultUsage);
-
-        if (sender != null)
-        {
-            command.addSender(sender);
-        }
-
-        getPersistence().put(command);
-        commandMap.put(commandName, command);
-        commands.add(command);
-
-        return command;
+        return materials;
     }
 
-    // Transient accessors for cache map
-    public List<PluginCommand> getCommands()
+    public void setMaterials(List<MaterialList> materials)
     {
-        return commands;
+        this.materials = materials;
     }
+
 
     @PersistField
     public String getDescription()
@@ -114,6 +73,26 @@ public class PluginData extends Persisted
     public String getId()
     {
         return id;
+    }
+    
+    public MaterialList getMaterialList(String listId)
+    {
+        MaterialList list = null;
+        for (MaterialList checkList : materials)
+        {
+            if (checkList.getId().equalsIgnoreCase(listId))
+            {
+                list = checkList;
+                break;
+            }
+        }
+        
+        if (list == null)
+        {
+           list = new MaterialList(listId); 
+        }
+        
+        return list;
     }
 
     public Message getMessage(String messageId, String defaultValue)
@@ -212,5 +191,53 @@ public class PluginData extends Persisted
         }
         authors.addAll(pdfFile.getAuthors());
         website = pdfFile.getWebsite();
+    }
+    
+
+
+    public PluginCommand getCommand(String commandName, String defaultTooltip,
+            String defaultUsage, CommandSenderData sender, PermissionType pType)
+    {
+        // First, look for a root command by this name-
+        // command map only holds root commands!
+        PluginCommand command = commandMap.get(commandName);
+        if (command != null)
+        {
+            command.setPermissionType(pType);
+            List<CommandSenderData> senders = command.getSenders();
+            if (sender != null)
+            {
+                if (senders == null)
+                {
+                    senders = new ArrayList<CommandSenderData>();
+                }
+                if (!senders.contains(sender))
+                {
+                    senders.add(sender);
+                    command.setSenders(senders);
+                }
+            }
+            return command;
+        }
+
+        // Create a new un-parented command
+        command = new PluginCommand(this, commandName, defaultTooltip, pType);
+        command.addUsage(defaultUsage);
+
+        if (sender != null)
+        {
+            command.addSender(sender);
+        }
+
+        getPersistence().put(command);
+        commandMap.put(commandName, command);
+        commands.add(command);
+
+        return command;
+    }
+
+    public List<PluginCommand> getCommands()
+    {
+        return commands;
     }
 }

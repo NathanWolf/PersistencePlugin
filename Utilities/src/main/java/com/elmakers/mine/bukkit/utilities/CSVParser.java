@@ -29,10 +29,8 @@ public class CSVParser
         return ints;
     }
 
-    public MaterialList parseMaterials(String csvList)
+    public void parseMaterials(MaterialList materials, String csvList)
     {
-        MaterialList materials = new MaterialList();
-
         String[] matIds = csvList.split(",");
         for (String matId : matIds)
         {
@@ -46,6 +44,20 @@ public class CSVParser
 
             }
         }
+    }
+    
+    public MaterialList parseMaterials(String listId, String csvList)
+    {
+        MaterialList materials = new MaterialList(listId);
+        parseMaterials(materials, csvList);
         return materials;
+    }
+
+    public MaterialList parseMaterials(String csvList)
+    {
+        MaterialList materials = new MaterialList();
+        parseMaterials(materials, csvList);
+        return materials;
+
     }
 }

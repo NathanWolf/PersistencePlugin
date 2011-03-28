@@ -32,23 +32,20 @@ public class BlockList implements Collection<BlockData>
      * 
      * Persist it instead, once I've got that working.
      */
-    private static final long serialVersionUID = 1L;
+    private static final long      serialVersionUID = 1L;
 
-    BoundingBox               area;
+    protected BoundingBox          area;
 
-    HashSet<Long>             blockIdMap;
+    protected HashSet<Long>        blockIdMap;
 
     // HashMap backing and easy persistence - need an extra list for this right
     // now.
-    ArrayList<BlockData>      blockList;
+    protected ArrayList<BlockData> blockList;
+    protected HashSet<BlockData>   blockMap;
 
-    HashSet<BlockData>        blockMap;
-
-    protected int             passesRemaining  = 1;
-
-    protected int             timeRemaining    = 0;
-
-    protected int             timeToLive       = 0;
+    protected int                  passesRemaining  = 1;
+    protected int                  timeRemaining    = 0;
+    protected int                  timeToLive       = 0;
 
     public BlockList()
     {
@@ -203,12 +200,27 @@ public class BlockList implements Collection<BlockData>
         return area;
     }
 
-    @PersistField
+    @PersistField(name="blocks")
     public ArrayList<BlockData> getBlockList()
     {
         return blockList;
     }
 
+    public void setBlockList(ArrayList<BlockData> blockList)
+    {
+        this.blockList = blockList;
+        if (blockList != null)
+        {
+            blockMap = new HashSet<BlockData>();
+            blockIdMap = new HashSet<Long>();
+            for (BlockData block : blockList)
+            {
+                blockMap.add(block);
+                blockIdMap.add(BlockData.getBlockId(block));
+            }
+        }
+    }
+    
     public boolean isEmpty()
     {
         if (blockList == null)
@@ -263,21 +275,6 @@ public class BlockList implements Collection<BlockData>
     public void setArea(BoundingBox area)
     {
         this.area = area;
-    }
-
-    public void setBlockList(ArrayList<BlockData> blockList)
-    {
-        this.blockList = blockList;
-        if (blockList != null)
-        {
-            blockMap = new HashSet<BlockData>();
-            blockIdMap = new HashSet<Long>();
-            for (BlockData block : blockList)
-            {
-                blockMap.add(block);
-                blockIdMap.add(BlockData.getBlockId(block));
-            }
-        }
     }
 
     public void setRepetitions(int repeat)
