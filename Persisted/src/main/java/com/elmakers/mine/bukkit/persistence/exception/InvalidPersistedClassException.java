@@ -21,8 +21,7 @@ public class InvalidPersistedClassException extends Exception
         this.persistedType = persistedType;
     }
 
-    public InvalidPersistedClassException(
-            Class<? extends Object> persistedType, String message)
+    public InvalidPersistedClassException(Class<? extends Object> persistedType, String message)
     {
         super(message);
         this.persistedType = persistedType;
@@ -49,8 +48,7 @@ public class InvalidPersistedClassException extends Exception
         }
     }
 
-    public InvalidPersistedClassException(PersistedClass persistedClass,
-            String message)
+    public InvalidPersistedClassException(PersistedClass persistedClass, String message)
     {
         super(message);
         this.persistedClass = persistedClass;

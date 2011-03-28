@@ -8,10 +8,7 @@ import java.util.Map;
  */
 public class BooleanPermissionDescriptionNode extends PermissionDescriptionNode
 {
-    public BooleanPermissionDescriptionNode(
-            final PermissionDescriptionNode parent, Map<String, Object> map)
-            throws PermissionDescriptionException,
-            PermissionDescriptionNodeException
+    public BooleanPermissionDescriptionNode(final PermissionDescriptionNode parent, Map<String, Object> map) throws PermissionDescriptionException, PermissionDescriptionNodeException
     {
         super(parent, map);
     }

@@ -23,190 +23,91 @@ import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassExcep
  */
 public class PersistedField
 {
-    protected final PersistentClass owningClass;
-    protected PersistedField        container = null;
-    protected Method                getter    = null;
-    protected Method                setter    = null;
-    protected Field                 field     = null;
-    protected String                name      = null;
-    protected FieldInfo             fieldInfo = null;
+    protected static Logger log = Persistence.getLogger();
 
-    protected static Logger         log       = Persistence.getLogger();
-
-    public PersistedField(PersistedField copy)
+    protected static String convertFieldName(String fieldName)
     {
-        this.setter = copy.setter;
-        this.getter = copy.getter;
-        this.field = copy.field;
-        this.name = copy.name;
-        this.fieldInfo = copy.fieldInfo;
-        this.owningClass = copy.owningClass;
+        if (fieldName.length() > 0)
+        {
+            String fieldEnd = "";
+            if (fieldName.length() > 1)
+            {
+                fieldEnd = fieldName.substring(1);
+            }
+            fieldName = fieldName.substring(0, 1).toUpperCase() + fieldEnd;
+        }
+        return fieldName;
     }
 
-    protected PersistedField(FieldInfo fieldInfo, Method getter, Method setter,
-            PersistentClass owningClass)
+    protected static String dePluralize(String plural)
     {
-        this.name = fieldInfo.getName();
-        if (name == null || name.length() == 0)
+        // Special cases- kinda hacky, but makes for clean schemas.
+        if (plural.equals("children"))
         {
-            name = getFieldFromMethod(getter);
+            return "child";
         }
-        this.getter = getter;
-        this.setter = setter;
-        this.field = null;
-        this.fieldInfo = fieldInfo;
-        this.owningClass = owningClass;
+        if (plural.equals("Children"))
+        {
+            return "Child";
+        }
+
+        if (plural.length() > 1 && plural.charAt(plural.length() - 1) == 's')
+        {
+            plural = plural.substring(0, plural.length() - 1);
+        }
+
+        return plural;
     }
 
-    protected PersistedField(FieldInfo fieldInfo, Field field,
-            PersistentClass owningClass)
+    protected static Field findField(String fieldName, Class<? extends Object> c)
     {
-        this.name = fieldInfo.getName();
-        if (name == null || name.length() == 0)
+        Field field = null;
+
+        try
         {
-            name = getFieldFromMethod(getter);
+            c.getField(fieldName);
         }
-        this.field = field;
-        this.getter = null;
-        this.setter = null;
-        this.fieldInfo = fieldInfo;
-        this.owningClass = owningClass;
+        catch (SecurityException e)
+        {
+            // log.warning("Persistence: Can't access field " + fieldName +
+            // " of class " + c.getName());
+        }
+        catch (NoSuchFieldException e)
+        {
+            // log.warning("Persistence: Can't find field " + fieldName +
+            // " of class " + c.getName());
+        }
+
+        return field;
     }
 
-    public Class<?> getType()
+    protected static Method findGetter(String getterName, Class<?> c)
     {
-        if (getter != null)
+        Method getter = null;
+        try
         {
-            return getter.getReturnType();
+            getter = c.getMethod(getterName);
         }
-        if (field != null)
+        catch (NoSuchMethodException e)
         {
-            return field.getType();
+            getter = null;
         }
-        return null;
+
+        return getter;
     }
 
-    public String getName()
+    protected static Method findSetter(String setterName, Class<?> returnType, Class<? extends Object> c)
     {
-        return name;
-    }
-
-    public String getDataName()
-    {
-        if (container != null && !(container instanceof PersistedList))
+        Method setter = null;
+        try
         {
-            return getContainedName(container.getDataName(), name);
+            setter = c.getMethod(setterName, returnType);
         }
-
-        if (fieldInfo.getName().length() > 0)
+        catch (NoSuchMethodException e)
         {
-            return fieldInfo.getName();
+            setter = null;
         }
-
-        return name;
-    }
-
-    public <T> boolean set(Object o, T value) throws InvalidDataException
-    {
-        if (setter == null)
-        {
-            if (isReadOnly())
-            {
-                log.warning("Persistence: attempt to set() on a field " + getName());
-            }
-            return false;
-        }
-
-        if (value == null && DataType.isPrimitive(getType()))
-        {
-            throw new InvalidDataException("Attempt to set null to primitive type for field " + getName());
-        }
-
-        if (setter != null)
-        {
-            try
-            {
-                setter.invoke(o, value);
-            }
-            catch (Throwable e)
-            {
-                throw new InvalidDataException(e);
-            }
-        }
-
-        if (field != null)
-        {
-            try
-            {
-                field.set(o, value);
-            }
-            catch (Throwable e)
-            {
-                throw new InvalidDataException(e);
-            }
-        }
-        return true;
-    }
-
-    public Object get(Object o)
-    {
-        if (o == null)
-        {
-            return null;
-        }
-
-        Object result = null;
-        if (getter != null)
-        {
-            try
-            {
-                result = getter.invoke(o);
-            }
-            catch (InvocationTargetException e)
-            {
-                result = null;
-            }
-            catch (IllegalAccessException e)
-            {
-                result = null;
-            }
-        }
-
-        if (result == null && field != null)
-        {
-            try
-            {
-                result = field.get(o);
-            }
-            catch (IllegalAccessException e)
-            {
-                result = null;
-            }
-        }
-
-        return result;
-    }
-
-    public PersistentClass getReferenceType()
-    {
-        return null;
-    }
-
-    public PersistedField getConcreteField()
-    {
-        PersistedField concrete = this;
-        PersistentClass reference = this.getReferenceType();
-        if (reference != null)
-        {
-            concrete = reference.getConcreteIdField();
-        }
-
-        return concrete;
-    }
-
-    public void populateHeader(DataTable dataTable)
-    {
-        populateHeader(dataTable, null);
+        return setter;
     }
 
     public static String getContainedName(String container, String contained)
@@ -229,48 +130,57 @@ public class PersistedField
         return dePluralize(contained);
     }
 
-    public void populateHeader(DataTable dataTable, PersistedField container)
+    protected static String getFieldFromMethod(Method method)
     {
-        DataRow headerRow = dataTable.getHeader();
-        DataField field = new DataField(getDataName(), getDataType());
-        field.setIdField(isIdField());
-        field.setAutogenerated(isAutogenerated());
-        headerRow.add(field);
-    }
-
-    public void save(DataRow row, Object o) throws InvalidDataException
-    {
-        Object data = null;
-        if (o != null)
+        String methodName = method.getName();
+        String fieldName = "";
+        if (methodName.substring(0, 2).equals("is"))
         {
-            data = get(o);
+            fieldName = methodName.substring(2);
         }
-        DataField field = new DataField(getDataName(), getDataType(), data);
-        field.setIdField(isIdField());
-        field.setAutogenerated(isAutogenerated());
-        row.add(field);
-    }
-
-    public void load(DataRow row, Object o) throws InvalidDataException
-    {
-        DataField dataField = row.get(getDataName());
-
-        // Silently drop missing data...
-        // TODO: Log print here?
-        if (dataField != null)
+        else
         {
-            set(o, dataField.getValue(getType()));
+            fieldName = methodName.substring(3);
         }
+        if (fieldName.length() > 0)
+        {
+            String fieldEnd = "";
+            if (fieldName.length() > 1)
+            {
+                fieldEnd = fieldName.substring(1);
+            }
+            fieldName = fieldName.substring(0, 1).toLowerCase() + fieldEnd;
+        }
+
+        return fieldName;
     }
 
-    public DataType getDataType()
+    protected static String getGetterName(String fieldName)
     {
-        Class<?> fieldType = getType();
-        return DataType.getTypeFromClass(fieldType);
+        return "get" + convertFieldName(fieldName);
     }
 
-    protected static PersistedField tryCreate(FieldInfo fieldInfo, Field field,
-            PersistentClass owningClass)
+    protected static String getIsName(String fieldName)
+    {
+        return "is" + convertFieldName(fieldName);
+    }
+
+    protected static String getSetterName(String fieldName)
+    {
+        return "set" + convertFieldName(fieldName);
+    }
+
+    protected static boolean isGetter(Method method)
+    {
+        return method.getReturnType() != void.class && method.getParameterTypes().length == 0;
+    }
+
+    protected static boolean isSetter(Method method)
+    {
+        return method.getReturnType() == void.class && method.getParameterTypes().length == 1;
+    }
+
+    protected static PersistedField tryCreate(FieldInfo fieldInfo, Field field, PersistentClass owningClass)
     {
         DataType dataType = DataType.getTypeFromClass(field.getType());
         PersistedField pField = null;
@@ -291,8 +201,7 @@ public class PersistedField
         return pField;
     }
 
-    protected static PersistedField tryCreate(FieldInfo fieldInfo,
-            Method getterOrSetter, PersistentClass owningClass)
+    protected static PersistedField tryCreate(FieldInfo fieldInfo, Method getterOrSetter, PersistentClass owningClass)
     {
         Method setter = null;
         Method getter = null;
@@ -367,140 +276,56 @@ public class PersistedField
         return pField;
     }
 
-    protected static String dePluralize(String plural)
+    protected PersistedField        container = null;
+
+    protected Field                 field     = null;
+
+    protected FieldInfo             fieldInfo = null;
+
+    protected Method                getter    = null;
+
+    protected String                name      = null;
+
+    protected final PersistentClass owningClass;
+
+    protected Method                setter    = null;
+
+    protected PersistedField(FieldInfo fieldInfo, Field field, PersistentClass owningClass)
     {
-        // Special cases- kinda hacky, but makes for clean schemas.
-        if (plural.equals("children"))
+        this.name = fieldInfo.getName();
+        if (name == null || name.length() == 0)
         {
-            return "child";
+            name = getFieldFromMethod(getter);
         }
-        if (plural.equals("Children"))
-        {
-            return "Child";
-        }
-
-        if (plural.length() > 1 && plural.charAt(plural.length() - 1) == 's')
-        {
-            plural = plural.substring(0, plural.length() - 1);
-        }
-
-        return plural;
+        this.field = field;
+        this.getter = null;
+        this.setter = null;
+        this.fieldInfo = fieldInfo;
+        this.owningClass = owningClass;
     }
 
-    protected static boolean isGetter(Method method)
+    protected PersistedField(FieldInfo fieldInfo, Method getter, Method setter, PersistentClass owningClass)
     {
-        return method.getReturnType() != void.class && method.getParameterTypes().length == 0;
+        this.name = fieldInfo.getName();
+        if (name == null || name.length() == 0)
+        {
+            name = getFieldFromMethod(getter);
+        }
+        this.getter = getter;
+        this.setter = setter;
+        this.field = null;
+        this.fieldInfo = fieldInfo;
+        this.owningClass = owningClass;
     }
 
-    protected static boolean isSetter(Method method)
+    public PersistedField(PersistedField copy)
     {
-        return method.getReturnType() == void.class && method.getParameterTypes().length == 1;
-    }
-
-    protected static String getFieldFromMethod(Method method)
-    {
-        String methodName = method.getName();
-        String fieldName = "";
-        if (methodName.substring(0, 2).equals("is"))
-        {
-            fieldName = methodName.substring(2);
-        }
-        else
-        {
-            fieldName = methodName.substring(3);
-        }
-        if (fieldName.length() > 0)
-        {
-            String fieldEnd = "";
-            if (fieldName.length() > 1)
-            {
-                fieldEnd = fieldName.substring(1);
-            }
-            fieldName = fieldName.substring(0, 1).toLowerCase() + fieldEnd;
-        }
-
-        return fieldName;
-    }
-
-    protected static Field findField(String fieldName, Class<? extends Object> c)
-    {
-        Field field = null;
-
-        try
-        {
-            c.getField(fieldName);
-        }
-        catch (SecurityException e)
-        {
-            // log.warning("Persistence: Can't access field " + fieldName +
-            // " of class " + c.getName());
-        }
-        catch (NoSuchFieldException e)
-        {
-            // log.warning("Persistence: Can't find field " + fieldName +
-            // " of class " + c.getName());
-        }
-
-        return field;
-    }
-
-    protected static Method findSetter(String setterName, Class<?> returnType,
-            Class<? extends Object> c)
-    {
-        Method setter = null;
-        try
-        {
-            setter = c.getMethod(setterName, returnType);
-        }
-        catch (NoSuchMethodException e)
-        {
-            setter = null;
-        }
-        return setter;
-    }
-
-    protected static Method findGetter(String getterName, Class<?> c)
-    {
-        Method getter = null;
-        try
-        {
-            getter = c.getMethod(getterName);
-        }
-        catch (NoSuchMethodException e)
-        {
-            getter = null;
-        }
-
-        return getter;
-    }
-
-    protected static String getSetterName(String fieldName)
-    {
-        return "set" + convertFieldName(fieldName);
-    }
-
-    protected static String getGetterName(String fieldName)
-    {
-        return "get" + convertFieldName(fieldName);
-    }
-
-    protected static String getIsName(String fieldName)
-    {
-        return "is" + convertFieldName(fieldName);
-    }
-
-    protected static String convertFieldName(String fieldName)
-    {
-        if (fieldName.length() > 0)
-        {
-            String fieldEnd = "";
-            if (fieldName.length() > 1)
-            {
-                fieldEnd = fieldName.substring(1);
-            }
-            fieldName = fieldName.substring(0, 1).toUpperCase() + fieldEnd;
-        }
-        return fieldName;
+        this.setter = copy.setter;
+        this.getter = copy.getter;
+        this.field = copy.field;
+        this.name = copy.name;
+        this.fieldInfo = copy.fieldInfo;
+        this.owningClass = copy.owningClass;
     }
 
     public void bind() throws InvalidPersistedClassException
@@ -508,25 +333,111 @@ public class PersistedField
 
     }
 
+    @Override
+    public PersistedField clone()
+    {
+        PersistedField field = new PersistedField(this);
+        return field;
+    }
+
+    public Object get(Object o)
+    {
+        if (o == null)
+        {
+            return null;
+        }
+
+        Object result = null;
+        if (getter != null)
+        {
+            try
+            {
+                result = getter.invoke(o);
+            }
+            catch (InvocationTargetException e)
+            {
+                result = null;
+            }
+            catch (IllegalAccessException e)
+            {
+                result = null;
+            }
+        }
+
+        if (result == null && field != null)
+        {
+            try
+            {
+                result = field.get(o);
+            }
+            catch (IllegalAccessException e)
+            {
+                result = null;
+            }
+        }
+
+        return result;
+    }
+
+    public PersistedField getConcreteField()
+    {
+        PersistedField concrete = this;
+        PersistentClass reference = this.getReferenceType();
+        if (reference != null)
+        {
+            concrete = reference.getConcreteIdField();
+        }
+
+        return concrete;
+    }
+
+    public String getDataName()
+    {
+        if (container != null && !(container instanceof PersistedList))
+        {
+            return getContainedName(container.getDataName(), name);
+        }
+
+        if (fieldInfo.getName().length() > 0)
+        {
+            return fieldInfo.getName();
+        }
+
+        return name;
+    }
+
+    public DataType getDataType()
+    {
+        Class<?> fieldType = getType();
+        return DataType.getTypeFromClass(fieldType);
+    }
+
     public FieldInfo getFieldInfo()
     {
         return fieldInfo;
     }
 
-    public void setContainer(PersistedField container)
+    public String getName()
     {
-        this.container = container;
+        return name;
     }
 
-    /**
-     * This will check to see if either entity info (annotations) specify this
-     * is a contained field
-     * 
-     * @return true if this is a contained field
-     */
-    public boolean isContained()
+    public PersistentClass getReferenceType()
     {
-        return fieldInfo.isContained();
+        return null;
+    }
+
+    public Class<?> getType()
+    {
+        if (getter != null)
+        {
+            return getter.getReturnType();
+        }
+        if (field != null)
+        {
+            return field.getType();
+        }
+        return null;
     }
 
     /**
@@ -545,6 +456,17 @@ public class PersistedField
         return fieldInfo.isAutogenerated();
     }
 
+    /**
+     * This will check to see if either entity info (annotations) specify this
+     * is a contained field
+     * 
+     * @return true if this is a contained field
+     */
+    public boolean isContained()
+    {
+        return fieldInfo.isContained();
+    }
+
     public boolean isIdField()
     {
         return fieldInfo.isIdField();
@@ -555,10 +477,89 @@ public class PersistedField
         return fieldInfo.isReadOnly();
     }
 
-    @Override
-    public PersistedField clone()
+    public void load(DataRow row, Object o) throws InvalidDataException
     {
-        PersistedField field = new PersistedField(this);
-        return field;
+        DataField dataField = row.get(getDataName());
+
+        // Silently drop missing data...
+        // TODO: Log print here?
+        if (dataField != null)
+        {
+            set(o, dataField.getValue(getType()));
+        }
+    }
+
+    public void populateHeader(DataTable dataTable)
+    {
+        populateHeader(dataTable, null);
+    }
+
+    public void populateHeader(DataTable dataTable, PersistedField container)
+    {
+        DataRow headerRow = dataTable.getHeader();
+        DataField field = new DataField(getDataName(), getDataType());
+        field.setIdField(isIdField());
+        field.setAutogenerated(isAutogenerated());
+        headerRow.add(field);
+    }
+
+    public void save(DataRow row, Object o) throws InvalidDataException
+    {
+        Object data = null;
+        if (o != null)
+        {
+            data = get(o);
+        }
+        DataField field = new DataField(getDataName(), getDataType(), data);
+        field.setIdField(isIdField());
+        field.setAutogenerated(isAutogenerated());
+        row.add(field);
+    }
+
+    public <T> boolean set(Object o, T value) throws InvalidDataException
+    {
+        if (setter == null)
+        {
+            if (isReadOnly())
+            {
+                log.warning("Persistence: attempt to set() on a field " + getName());
+            }
+            return false;
+        }
+
+        if (value == null && DataType.isPrimitive(getType()))
+        {
+            throw new InvalidDataException("Attempt to set null to primitive type for field " + getName());
+        }
+
+        if (setter != null)
+        {
+            try
+            {
+                setter.invoke(o, value);
+            }
+            catch (Throwable e)
+            {
+                throw new InvalidDataException(e);
+            }
+        }
+
+        if (field != null)
+        {
+            try
+            {
+                field.set(o, value);
+            }
+            catch (Throwable e)
+            {
+                throw new InvalidDataException(e);
+            }
+        }
+        return true;
+    }
+
+    public void setContainer(PersistedField container)
+    {
+        this.container = container;
     }
 }

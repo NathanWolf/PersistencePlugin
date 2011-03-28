@@ -45,13 +45,6 @@ public class CSVParser
             }
         }
     }
-    
-    public MaterialList parseMaterials(String listId, String csvList)
-    {
-        MaterialList materials = new MaterialList(listId);
-        parseMaterials(materials, csvList);
-        return materials;
-    }
 
     public MaterialList parseMaterials(String csvList)
     {
@@ -59,5 +52,12 @@ public class CSVParser
         parseMaterials(materials, csvList);
         return materials;
 
+    }
+
+    public MaterialList parseMaterials(String listId, String csvList)
+    {
+        MaterialList materials = new MaterialList(listId);
+        parseMaterials(materials, csvList);
+        return materials;
     }
 }

@@ -278,8 +278,7 @@ public abstract class SqlStore extends DataStore
         return true;
     }
 
-    public abstract String getConnectionString(String schema, String user,
-            String password);
+    public abstract String getConnectionString(String schema, String user, String password);
 
     public abstract String getDriverClassName();
 

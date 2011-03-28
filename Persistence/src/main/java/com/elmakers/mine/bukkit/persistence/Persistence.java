@@ -27,20 +27,43 @@ import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassExcep
 public class Persistence implements
         com.elmakers.mine.bukkit.persisted.Persistence
 {
-    private final Server                                        server;
-    private final DataStoreProvider                             provider;
+    private static boolean      allowOpsSUAccess = true;
+    // Make sure that we don't create a persisted class twice at the same time
+    private static final Object classCreateLock  = new Object();
 
-    private static boolean                                      allowOpsSUAccess  = true;
+    private static final Logger log              = Logger.getLogger("Minecraft");
 
-    private static final Logger                                 log               = Logger.getLogger("Minecraft");
+    /**
+     * Retrieve the Logger that Persistence uses for debug messages and errors.
+     * 
+     * Currently, this is hard-coded to the Minecraft server logger.
+     * 
+     * @return A Logger that can be used for errors or debugging.
+     */
+    public static Logger getLogger()
+    {
+        return log;
+    }
 
-    private final Map<Class<? extends Object>, PersistentClass> persistedClassMap = new ConcurrentHashMap<Class<? extends Object>, PersistentClass>();
-    private final Map<String, Schema>                           schemaMap         = new ConcurrentHashMap<String, Schema>();
+    public static boolean getOpsCanSU()
+    {
+        return allowOpsSUAccess;
+    }
+
+    public static void setOpsCanSU(boolean allow)
+    {
+        allowOpsSUAccess = allow;
+    }
 
     // Locks for manual synchronization
 
-    // Make sure that we don't create a persisted class twice at the same time
-    private static final Object                                 classCreateLock   = new Object();
+    private final Map<Class<? extends Object>, PersistentClass> persistedClassMap = new ConcurrentHashMap<Class<? extends Object>, PersistentClass>();
+
+    private final DataStoreProvider                             provider;
+
+    private final Map<String, Schema>                           schemaMap         = new ConcurrentHashMap<String, Schema>();
+
+    private final Server                                        server;
 
     /**
      * Persistence is a singleton, so we hide the constructor.
@@ -58,96 +81,66 @@ public class Persistence implements
     }
 
     /**
-     * Retrieve the Logger that Persistence uses for debug messages and errors.
+     * Clear all data.
      * 
-     * Currently, this is hard-coded to the Minecraft server logger.
-     * 
-     * @return A Logger that can be used for errors or debugging.
+     * This is currently the method used to clear the cache and reload data,
+     * however it is flawed. It will probably be replaced with a "reload" method
+     * eventually.
      */
-    public static Logger getLogger()
+    public void clear()
     {
-        return log;
+        persistedClassMap.clear();
+        schemaMap.clear();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.elmakers.mine.bukkit.persistence.IPersistence#getAll(java.util.List,
-     * java.lang.Class)
-     */
-    public <T> void getAll(List<T> objects, Class<T> objectType)
+    protected PersistentClass createPersistedClass(Class<? extends Object> persistType, EntityInfo entityInfo) throws InvalidPersistedClassException
     {
-        PersistentClass persistedClass = null;
-        try
+        PersistentClass persistedClass = new PersistentClass(this, entityInfo);
+        if (!persistedClass.bind(persistType))
         {
-            persistedClass = getPersistedClass(objectType);
+            return null;
         }
-        catch (InvalidPersistedClassException e)
+        String schemaName = persistedClass.getSchemaName();
+        Schema schema = getSchema(schemaName);
+        if (schema == null)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            schema = createSchema(schemaName);
         }
-        if (persistedClass == null)
-        {
-            return;
-        }
+        schema.addPersistedClass(persistedClass);
+        persistedClass.setSchema(schema);
 
-        persistedClass.getAll(objects);
+        persistedClassMap.put(persistType, persistedClass);
+
+        // Deferred bind refernces- to avoid circular reference issues
+        persistedClass.bindReferences();
+
+        return persistedClass;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.elmakers.mine.bukkit.persistence.IPersistence#remove(java.lang.Object
-     * )
-     */
-    public void remove(Object removeObject)
+    protected Schema createSchema(String schemaName)
     {
-        PersistentClass persistedClass = null;
-        try
+        Schema schema = schemaMap.get(schemaName);
+        if (schema == null)
         {
-            persistedClass = getPersistedClass(removeObject.getClass());
+            schemaName = schemaName.toLowerCase();
+            DataStore store = createStore(schemaName);
+            schema = new Schema(schemaName, store);
+            schemaMap.put(schemaName, schema);
         }
-        catch (InvalidPersistedClassException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        if (persistedClass == null)
-        {
-            return;
-        }
-
-        persistedClass.remove(removeObject);
+        return schema;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.elmakers.mine.bukkit.persistence.IPersistence#putAll(java.util.List,
-     * java.lang.Class)
-     */
-    public <T> void putAll(List<T> objects, Class<T> objectType)
+    protected DataStore createStore(String schema)
     {
-        PersistentClass persistedClass = null;
-        try
-        {
-            persistedClass = getPersistedClass(objectType);
-        }
-        catch (InvalidPersistedClassException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        if (persistedClass == null)
-        {
-            return;
-        }
+        return provider.createStore(schema);
+    }
 
-        persistedClass.putAll(objects);
+    public void disconnect()
+    {
+        for (Schema schema : schemaMap.values())
+        {
+            schema.disconnect();
+        }
     }
 
     /*
@@ -187,19 +180,15 @@ public class Persistence implements
      * (non-Javadoc)
      * 
      * @see
-     * com.elmakers.mine.bukkit.persistence.IPersistence#put(java.lang.Object)
+     * com.elmakers.mine.bukkit.persistence.IPersistence#getAll(java.util.List,
+     * java.lang.Class)
      */
-    public boolean put(Object persist)
+    public <T> void getAll(List<T> objects, Class<T> objectType)
     {
-        if (persist == null)
-        {
-            return false;
-        }
-
         PersistentClass persistedClass = null;
         try
         {
-            persistedClass = getPersistedClass(persist.getClass());
+            persistedClass = getPersistedClass(objectType);
         }
         catch (InvalidPersistedClassException e)
         {
@@ -208,70 +197,10 @@ public class Persistence implements
         }
         if (persistedClass == null)
         {
-            return false;
+            return;
         }
 
-        persistedClass.put(persist);
-
-        return true;
-    }
-
-    /**
-     * Force a save of all cached data.
-     * 
-     * This only saves dirty data- unmodified data is not saved back to the
-     * database. Persistence calls save() internally on server shutdown, player
-     * login, and player logout. So, calling save is not mandatory- you only
-     * need to use it to force an immediate save.
-     * 
-     */
-    public void save()
-    {
-        for (PersistentClass persistedClass : persistedClassMap.values())
-        {
-            persistedClass.save();
-        }
-    }
-
-    /**
-     * Clear all data.
-     * 
-     * This is currently the method used to clear the cache and reload data,
-     * however it is flawed. It will probably be replaced with a "reload" method
-     * eventually.
-     */
-    public void clear()
-    {
-        persistedClassMap.clear();
-        schemaMap.clear();
-    }
-
-    /**
-     * Retrieve a Schema definition, with a list of PersistedClasses.
-     * 
-     * This function is used for inspecting schemas and entities.
-     * 
-     * @param schemaName
-     *            The schema to retrieve
-     * @return A Schema definition class, containing entity classes
-     */
-    public Schema getSchema(String schemaName)
-    {
-        return schemaMap.get(schemaName);
-    }
-
-    /**
-     * Retrieve a list of definitions for all known schemas.
-     * 
-     * This function is used for inspecting schemas and entities.
-     * 
-     * @return The list of schemas
-     */
-    public List<Schema> getSchemaList()
-    {
-        List<Schema> schemaList = new ArrayList<Schema>();
-        schemaList.addAll(schemaMap.values());
-        return schemaList;
+        persistedClass.getAll(objects);
     }
 
     /**
@@ -282,9 +211,7 @@ public class Persistence implements
      *            The annotated Class to persist
      * @return The persisted class definition, or null if failure
      */
-    public PersistentClass getPersistedClass(
-            Class<? extends Object> persistClass)
-            throws InvalidPersistedClassException
+    public PersistentClass getPersistedClass(Class<? extends Object> persistClass) throws InvalidPersistedClassException
     {
         /*
          * Look for Class annotations
@@ -317,45 +244,6 @@ public class Persistence implements
         return persistedClass;
     }
 
-    protected PersistentClass createPersistedClass(
-            Class<? extends Object> persistType, EntityInfo entityInfo)
-            throws InvalidPersistedClassException
-    {
-        PersistentClass persistedClass = new PersistentClass(this, entityInfo);
-        if (!persistedClass.bind(persistType))
-        {
-            return null;
-        }
-        String schemaName = persistedClass.getSchemaName();
-        Schema schema = getSchema(schemaName);
-        if (schema == null)
-        {
-            schema = createSchema(schemaName);
-        }
-        schema.addPersistedClass(persistedClass);
-        persistedClass.setSchema(schema);
-
-        persistedClassMap.put(persistType, persistedClass);
-
-        // Deferred bind refernces- to avoid circular reference issues
-        persistedClass.bindReferences();
-
-        return persistedClass;
-    }
-
-    protected Schema createSchema(String schemaName)
-    {
-        Schema schema = schemaMap.get(schemaName);
-        if (schema == null)
-        {
-            schemaName = schemaName.toLowerCase();
-            DataStore store = createStore(schemaName);
-            schema = new Schema(schemaName, store);
-            schemaMap.put(schemaName, schema);
-        }
-        return schema;
-    }
-
     /**
      * Retrieve or create a persisted class definition for a given class type.
      * 
@@ -367,8 +255,7 @@ public class Persistence implements
      *            Information on how to persist this class
      * @return The persisted class definition, or null if failure
      */
-    public PersistentClass getPersistedClass(
-            Class<? extends Object> persistType, EntityInfo entityInfo)
+    public PersistentClass getPersistedClass(Class<? extends Object> persistType, EntityInfo entityInfo)
     {
         PersistentClass persistedClass = persistedClassMap.get(persistType);
         if (persistedClass == null)
@@ -394,35 +281,144 @@ public class Persistence implements
         return persistedClass;
     }
 
+    /**
+     * Retrieve a Schema definition, with a list of PersistedClasses.
+     * 
+     * This function is used for inspecting schemas and entities.
+     * 
+     * @param schemaName
+     *            The schema to retrieve
+     * @return A Schema definition class, containing entity classes
+     */
+    public Schema getSchema(String schemaName)
+    {
+        return schemaMap.get(schemaName);
+    }
+
+    /**
+     * Retrieve a list of definitions for all known schemas.
+     * 
+     * This function is used for inspecting schemas and entities.
+     * 
+     * @return The list of schemas
+     */
+    public List<Schema> getSchemaList()
+    {
+        List<Schema> schemaList = new ArrayList<Schema>();
+        schemaList.addAll(schemaMap.values());
+        return schemaList;
+    }
+
     /*
      * Protected members
      */
 
-    protected DataStore createStore(String schema)
-    {
-        return provider.createStore(schema);
-    }
-
-    public void disconnect()
-    {
-        for (Schema schema : schemaMap.values())
-        {
-            schema.disconnect();
-        }
-    }
-
-    public static boolean getOpsCanSU()
-    {
-        return allowOpsSUAccess;
-    }
-
-    public static void setOpsCanSU(boolean allow)
-    {
-        allowOpsSUAccess = allow;
-    }
-
     public Server getServer()
     {
         return server;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.elmakers.mine.bukkit.persistence.IPersistence#put(java.lang.Object)
+     */
+    public boolean put(Object persist)
+    {
+        if (persist == null)
+        {
+            return false;
+        }
+
+        PersistentClass persistedClass = null;
+        try
+        {
+            persistedClass = getPersistedClass(persist.getClass());
+        }
+        catch (InvalidPersistedClassException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        if (persistedClass == null)
+        {
+            return false;
+        }
+
+        persistedClass.put(persist);
+
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.elmakers.mine.bukkit.persistence.IPersistence#putAll(java.util.List,
+     * java.lang.Class)
+     */
+    public <T> void putAll(List<T> objects, Class<T> objectType)
+    {
+        PersistentClass persistedClass = null;
+        try
+        {
+            persistedClass = getPersistedClass(objectType);
+        }
+        catch (InvalidPersistedClassException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        if (persistedClass == null)
+        {
+            return;
+        }
+
+        persistedClass.putAll(objects);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.elmakers.mine.bukkit.persistence.IPersistence#remove(java.lang.Object
+     * )
+     */
+    public void remove(Object removeObject)
+    {
+        PersistentClass persistedClass = null;
+        try
+        {
+            persistedClass = getPersistedClass(removeObject.getClass());
+        }
+        catch (InvalidPersistedClassException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        if (persistedClass == null)
+        {
+            return;
+        }
+
+        persistedClass.remove(removeObject);
+    }
+
+    /**
+     * Force a save of all cached data.
+     * 
+     * This only saves dirty data- unmodified data is not saved back to the
+     * database. Persistence calls save() internally on server shutdown, player
+     * login, and player logout. So, calling save is not mandatory- you only
+     * need to use it to force an immediate save.
+     * 
+     */
+    public void save()
+    {
+        for (PersistentClass persistedClass : persistedClassMap.values())
+        {
+            persistedClass.save();
+        }
     }
 }

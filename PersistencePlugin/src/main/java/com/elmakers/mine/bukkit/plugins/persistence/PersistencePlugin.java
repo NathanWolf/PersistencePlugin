@@ -225,8 +225,7 @@ public class PersistencePlugin extends JavaPlugin
      * , org.bukkit.command.Command, java.lang.String, java.lang.String[])
      */
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd,
-            String commandLabel, String[] parameters)
+    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] parameters)
     {
         if (listeners == null)
         {
@@ -273,8 +272,7 @@ public class PersistencePlugin extends JavaPlugin
         }
     }
 
-    protected CommandSenderData updateCommandSender(String senderId,
-            Class<?> senderClass)
+    protected CommandSenderData updateCommandSender(String senderId, Class<?> senderClass)
     {
         CommandSenderData sender = persistence.get(senderId, CommandSenderData.class);
         if (sender == null)

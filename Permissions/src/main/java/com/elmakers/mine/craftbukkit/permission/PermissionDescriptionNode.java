@@ -8,10 +8,7 @@ import java.util.Map;
  */
 public abstract class PermissionDescriptionNode
 {
-    public static PermissionDescriptionNode createNode(
-            final PermissionDescriptionNode parent,
-            final Map<String, Object> map)
-            throws PermissionDescriptionNodeException
+    public static PermissionDescriptionNode createNode(final PermissionDescriptionNode parent, final Map<String, Object> map) throws PermissionDescriptionNodeException
     {
         Class<? extends PermissionDescriptionNode> clazz = null;
 
@@ -53,9 +50,7 @@ public abstract class PermissionDescriptionNode
 
     protected final PermissionDescriptionNode parent;
 
-    public PermissionDescriptionNode(final PermissionDescriptionNode parent,
-            Map<String, Object> map) throws PermissionDescriptionException,
-            PermissionDescriptionNodeException
+    public PermissionDescriptionNode(final PermissionDescriptionNode parent, Map<String, Object> map) throws PermissionDescriptionException, PermissionDescriptionNodeException
     {
         this.parent = parent;
         this.map = map;

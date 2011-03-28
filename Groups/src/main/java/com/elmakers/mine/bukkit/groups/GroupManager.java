@@ -51,8 +51,7 @@ public class GroupManager
 
     protected final PluginUtilities utilities;
 
-    public GroupManager(Server server, Persistence persistence,
-            PluginUtilities utilities, File dataFolder)
+    public GroupManager(Server server, Persistence persistence, PluginUtilities utilities, File dataFolder)
     {
         this.persistence = persistence;
         this.server = server;
@@ -133,8 +132,7 @@ public class GroupManager
         return true;
     }
 
-    public boolean onCreateGroup(CommandSender messageOutput,
-            String[] parameters)
+    public boolean onCreateGroup(CommandSender messageOutput, String[] parameters)
     {
         if (parameters.length == 0)
         {
@@ -257,8 +255,7 @@ public class GroupManager
         return true;
     }
 
-    public boolean onGrantPlayer(CommandSender messageOutput,
-            String[] parameters)
+    public boolean onGrantPlayer(CommandSender messageOutput, String[] parameters)
     {
         if (parameters.length < 2)
         {
@@ -292,8 +289,7 @@ public class GroupManager
     }
 
     // TODO: Less copy+paste! In a hurry....
-    public boolean onRemoveFromGroup(CommandSender messageOutput,
-            String[] parameters)
+    public boolean onRemoveFromGroup(CommandSender messageOutput, String[] parameters)
     {
         if (parameters.length < 2)
         {

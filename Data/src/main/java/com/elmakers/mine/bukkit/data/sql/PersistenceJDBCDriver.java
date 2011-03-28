@@ -38,8 +38,7 @@ class PersistenceJDBCDriver implements Driver
         return this.driver.getMinorVersion();
     }
 
-    public DriverPropertyInfo[] getPropertyInfo(String u, Properties p)
-            throws SQLException
+    public DriverPropertyInfo[] getPropertyInfo(String u, Properties p) throws SQLException
     {
         return this.driver.getPropertyInfo(u, p);
     }

@@ -28,16 +28,14 @@ public class InvalidDataException extends Exception
         this.dataRow = dataRow;
     }
 
-    public InvalidDataException(DataTable dataTable, DataRow dataRow,
-            DataField dataField)
+    public InvalidDataException(DataTable dataTable, DataRow dataRow, DataField dataField)
     {
         this.dataTable = dataTable;
         this.dataRow = dataRow;
         this.dataField = dataField;
     }
 
-    public InvalidDataException(DataTable dataTable, DataRow dataRow,
-            DataField dataField, String message)
+    public InvalidDataException(DataTable dataTable, DataRow dataRow, DataField dataField, String message)
     {
         super(message);
         this.dataTable = dataTable;
@@ -45,16 +43,14 @@ public class InvalidDataException extends Exception
         this.dataField = dataField;
     }
 
-    public InvalidDataException(DataTable dataTable, DataRow dataRow,
-            String message)
+    public InvalidDataException(DataTable dataTable, DataRow dataRow, String message)
     {
         super(message);
         this.dataTable = dataTable;
         this.dataRow = dataRow;
     }
 
-    public InvalidDataException(DataTable dataTable, DataRow dataRow,
-            Throwable cause)
+    public InvalidDataException(DataTable dataTable, DataRow dataRow, Throwable cause)
     {
         super(cause);
         this.dataTable = dataTable;

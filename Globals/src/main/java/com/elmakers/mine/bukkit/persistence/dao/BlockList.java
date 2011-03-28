@@ -200,27 +200,12 @@ public class BlockList implements Collection<BlockData>
         return area;
     }
 
-    @PersistField(name="blocks")
+    @PersistField(name = "blocks")
     public ArrayList<BlockData> getBlockList()
     {
         return blockList;
     }
 
-    public void setBlockList(ArrayList<BlockData> blockList)
-    {
-        this.blockList = blockList;
-        if (blockList != null)
-        {
-            blockMap = new HashSet<BlockData>();
-            blockIdMap = new HashSet<Long>();
-            for (BlockData block : blockList)
-            {
-                blockMap.add(block);
-                blockIdMap.add(BlockData.getBlockId(block));
-            }
-        }
-    }
-    
     public boolean isEmpty()
     {
         if (blockList == null)
@@ -275,6 +260,21 @@ public class BlockList implements Collection<BlockData>
     public void setArea(BoundingBox area)
     {
         this.area = area;
+    }
+
+    public void setBlockList(ArrayList<BlockData> blockList)
+    {
+        this.blockList = blockList;
+        if (blockList != null)
+        {
+            blockMap = new HashSet<BlockData>();
+            blockIdMap = new HashSet<Long>();
+            for (BlockData block : blockList)
+            {
+                blockMap.add(block);
+                blockIdMap.add(BlockData.getBlockId(block));
+            }
+        }
     }
 
     public void setRepetitions(int repeat)

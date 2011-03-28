@@ -15,8 +15,7 @@ public class ReplaceMaterialAction implements BlockRecurseAction
 
     protected MaterialList replaceable = new MaterialList();
 
-    public ReplaceMaterialAction(Block targetBlock, Material replaceMaterial,
-            byte replaceData)
+    public ReplaceMaterialAction(Block targetBlock, Material replaceMaterial, byte replaceData)
     {
 
         replaceable.add(new MaterialData(targetBlock.getType(), targetBlock.getData()));
@@ -28,8 +27,7 @@ public class ReplaceMaterialAction implements BlockRecurseAction
         replace = new MaterialData(replaceMaterial, replaceData);
     }
 
-    public ReplaceMaterialAction(Material targetMaterial, byte targetData,
-            Material replaceMaterial, byte replaceData)
+    public ReplaceMaterialAction(Material targetMaterial, byte targetData, Material replaceMaterial, byte replaceData)
     {
         replace = new MaterialData(replaceMaterial, replaceData);
         replaceable.add(new MaterialData(targetMaterial, targetData));

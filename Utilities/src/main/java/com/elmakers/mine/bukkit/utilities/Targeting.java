@@ -17,63 +17,6 @@ import org.bukkit.util.Vector;
  */
 public class Targeting
 {
-    public Targeting(Player player)
-    {
-        this.player = player;
-        reset();
-    }
-
-    /**
-     * Find a good location to spawn a projectile, such as a fireball.
-     * 
-     * @return The projectile spawn location
-     */
-    protected Location getProjectileSpawnLocation()
-    {
-        Block spawnBlock = getPlayerBlock();
-
-        int height = 2;
-        double hLength = 2;
-        double xOffset = (hLength * Math.cos(Math.toRadians(xRotation)));
-        double zOffset = (hLength * Math.sin(Math.toRadians(xRotation)));
-
-        Vector aimVector = new Vector(xOffset + 0.5, height + 0.5, zOffset + 0.5);
-
-        Location location = new Location(player.getWorld(), spawnBlock.getX() + aimVector.getX(), spawnBlock.getY() + aimVector.getY(), spawnBlock.getZ() + aimVector.getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
-
-        return location;
-    }
-
-    /**
-     * Get a Vector reprsenting the current aim direction
-     * 
-     * @return The player's aim vector
-     */
-    public Vector getAimVector()
-    {
-        return new Vector((0 - Math.sin(Math.toRadians(playerLocation.getYaw()))), (0 - Math.sin(Math.toRadians(playerLocation.getPitch()))), Math.cos(Math.toRadians(playerLocation.getYaw())));
-    }
-
-    /**
-     * Get the (simplified) player pitch.
-     * 
-     * @return Player Y-axis rotation (pitch)
-     */
-    public double getYRotation()
-    {
-        return yRotation;
-    }
-
-    /**
-     * Get the (simplified) player yaw.
-     * 
-     * @return Player X-axis rotation (yaw)
-     */
-    public double getXRotation()
-    {
-        return xRotation;
-    }
-
     /**
      * A helper function to go change a given direction to the direction
      * "to the right".
@@ -128,57 +71,60 @@ public class Targeting
         return direction;
     }
 
-    public void targetThrough(Material mat)
-    {
-        targetThroughMaterials.put(mat, true);
-    }
+    private boolean                          allowMaxRange          = false;
 
-    public void noTargetThrough(Material mat)
-    {
-        targetThroughMaterials.put(mat, false);
-    }
+    private double                           hLength                = 0;
 
-    public boolean isTargetable(Material mat)
-    {
-        Boolean checkMat = targetThroughMaterials.get(mat);
-        if (reverseTargeting)
-        {
-            return (checkMat != null && checkMat);
-        }
-        return (checkMat == null || !checkMat);
-    }
+    private int                              lastX                  = 0;
 
-    public void setReverseTargeting(boolean reverse)
-    {
-        reverseTargeting = reverse;
-    }
+    private int                              lastY                  = 0;
 
-    public boolean isReverseTargeting()
-    {
-        return reverseTargeting;
-    }
+    private int                              lastZ                  = 0;
 
-    public void setTargetHeightRequired(int height)
-    {
-        targetHeightRequired = height;
-    }
+    private double                           length                 = 0;
 
-    public int getTargetHeightRequired()
-    {
-        return targetHeightRequired;
-    }
+    private final Player                     player;
+
+    private Location                         playerLocation;
+
+    private int                              range                  = 200;
+
+    private boolean                          reverseTargeting       = false;
+
+    private final double                     step                   = 0.2;
+
+    private int                              targetHeightRequired   = 1;
+
+    private boolean                          targetingComplete      = false;
+
+    private final HashMap<Material, Boolean> targetThroughMaterials = new HashMap<Material, Boolean>();
+
+    private int                              targetX                = 0;
+
+    private int                              targetY                = 0;
+
+    private int                              targetZ                = 0;
+
+    private final double                     viewHeight             = 1.65;
+
+    private double                           xOffset                = 0;
+
+    private double                           xRotation              = 0;
 
     /*
-     * Ground / location search and test function functions
+     * HitBlox-ported code
      */
-    public boolean isOkToStandIn(Material mat)
-    {
-        return (mat == Material.AIR || mat == Material.WATER || mat == Material.STATIONARY_WATER);
-    }
 
-    public boolean isOkToStandOn(Material mat)
+    private double                           yOffset                = 0;
+
+    private double                           yRotation              = 0;
+
+    private double                           zOffset                = 0;
+
+    public Targeting(Player player)
     {
-        return (mat != Material.AIR && mat != Material.LAVA && mat != Material.STATIONARY_LAVA);
+        this.player = player;
+        reset();
     }
 
     public Location findPlaceToStand(Location playerLoc, boolean goUp)
@@ -209,13 +155,87 @@ public class Targeting
             if (isOkToStandOn(block.getType()) && isOkToStandIn(blockOneUp.getType()) && isOkToStandIn(blockTwoUp.getType()))
             {
                 // spot found - return location
-                return new Location(world, (double) x + 0.5, (double) y + 1, (double) z + 0.5, playerLoc.getYaw(), playerLoc.getPitch());
+                return new Location(world, x + 0.5, (double) y + 1, z + 0.5, playerLoc.getYaw(), playerLoc.getPitch());
             }
             y += step;
         }
 
         // no spot found
         return null;
+    }
+
+    protected void findTargetBlock()
+    {
+        if (targetingComplete)
+        {
+            return;
+        }
+
+        while (getNextBlock() != null)
+        {
+            Block block = getCurBlock();
+            if (isTargetable(block.getType()))
+            {
+                boolean enoughSpace = true;
+                for (int i = 1; i < targetHeightRequired; i++)
+                {
+                    block = block.getFace(BlockFace.UP);
+                    if (!isTargetable(block.getType()))
+                    {
+                        enoughSpace = false;
+                        break;
+                    }
+                }
+                if (enoughSpace)
+                {
+                    break;
+                }
+            }
+        }
+        targetingComplete = true;
+    }
+
+    /**
+     * Get a Vector reprsenting the current aim direction
+     * 
+     * @return The player's aim vector
+     */
+    public Vector getAimVector()
+    {
+        return new Vector((0 - Math.sin(Math.toRadians(playerLocation.getYaw()))), (0 - Math.sin(Math.toRadians(playerLocation.getPitch()))), Math.cos(Math.toRadians(playerLocation.getYaw())));
+    }
+
+    /**
+     * Returns the block at the specified location
+     * 
+     * Just a wrapper for world.getBlock at this point.
+     * 
+     * @param x
+     * @param y
+     * @param z
+     * @return block The block at the specified coordinates
+     */
+    public Block getBlockAt(int x, int y, int z)
+    {
+        World world = player.getWorld();
+        return world.getBlockAt(x, y, z);
+    }
+
+    /**
+     * Returns the current block along the line of vision
+     * 
+     * @return The block
+     */
+    public Block getCurBlock()
+    {
+        if (length > range && !allowMaxRange)
+        {
+            return null;
+        }
+        else
+        {
+            return getBlockAt(targetX, targetY, targetZ);
+        }
     }
 
     public double getDistance(Location source, Location target)
@@ -227,6 +247,77 @@ public class Targeting
     {
         Location loc = player.getLocation();
         return Math.sqrt(Math.pow(loc.getX() - target.getX(), 2) + Math.pow(loc.getY() - target.getY(), 2) + Math.pow(loc.getZ() - target.getZ(), 2));
+    }
+
+    /**
+     * Returns the block attached to the face at the cursor, or null if out of
+     * range
+     * 
+     * @return The face block
+     */
+    public Block getFaceBlock()
+    {
+        findTargetBlock();
+        if (getCurBlock() != null)
+        {
+            return getLastBlock();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the previous block along the line of vision
+     * 
+     * @return The block
+     */
+    public Block getLastBlock()
+    {
+        return getBlockAt(lastX, lastY, lastZ);
+    }
+
+    /**
+     * Move "steps" forward along line of vision and returns the block there
+     * 
+     * @return The block at the new location
+     */
+    public Block getNextBlock()
+    {
+        lastX = targetX;
+        lastY = targetY;
+        lastZ = targetZ;
+
+        do
+        {
+            length += step;
+
+            hLength = length * Math.cos(Math.toRadians(yRotation));
+            yOffset = length * Math.sin(Math.toRadians(yRotation));
+            xOffset = hLength * Math.cos(Math.toRadians(xRotation));
+            zOffset = hLength * Math.sin(Math.toRadians(xRotation));
+
+            targetX = (int) Math.floor(xOffset + playerLocation.getX());
+            targetY = (int) Math.floor(yOffset + playerLocation.getY() + viewHeight);
+            targetZ = (int) Math.floor(zOffset + playerLocation.getZ());
+
+        }
+        while (length <= range && targetX == lastX && targetY == lastY && targetZ == lastZ);
+
+        if (length > range)
+        {
+            if (allowMaxRange)
+            {
+                return getBlockAt(targetX, targetY, targetZ);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        return getBlockAt(targetX, targetY, targetZ);
     }
 
     /**
@@ -294,15 +385,36 @@ public class Targeting
     {
         float playerRot = player.getLocation().getYaw();
         while (playerRot < 0)
+        {
             playerRot += 360;
+        }
         while (playerRot > 360)
+        {
             playerRot -= 360;
+        }
         return playerRot;
     }
 
-    /*
-     * HitBlox-ported code
+    /**
+     * Find a good location to spawn a projectile, such as a fireball.
+     * 
+     * @return The projectile spawn location
      */
+    protected Location getProjectileSpawnLocation()
+    {
+        Block spawnBlock = getPlayerBlock();
+
+        int height = 2;
+        double hLength = 2;
+        double xOffset = hLength * Math.cos(Math.toRadians(xRotation));
+        double zOffset = hLength * Math.sin(Math.toRadians(xRotation));
+
+        Vector aimVector = new Vector(xOffset + 0.5, height + 0.5, zOffset + 0.5);
+
+        Location location = new Location(player.getWorld(), spawnBlock.getX() + aimVector.getX(), spawnBlock.getY() + aimVector.getY(), spawnBlock.getZ() + aimVector.getZ(), player.getLocation().getYaw(), player.getLocation().getPitch());
+
+        return location;
+    }
 
     /**
      * Returns the block at the cursor, or null if out of range
@@ -315,110 +427,63 @@ public class Targeting
         return getCurBlock();
     }
 
-    /**
-     * Returns the block attached to the face at the cursor, or null if out of
-     * range
-     * 
-     * @return The face block
-     */
-    public Block getFaceBlock()
+    public int getTargetHeightRequired()
     {
-        findTargetBlock();
-        if (getCurBlock() != null)
-        {
-            return getLastBlock();
-        }
-        else
-        {
-            return null;
-        }
+        return targetHeightRequired;
     }
 
     /**
-     * Move "steps" forward along line of vision and returns the block there
+     * Get the (simplified) player yaw.
      * 
-     * @return The block at the new location
+     * @return Player X-axis rotation (yaw)
      */
-    public Block getNextBlock()
+    public double getXRotation()
     {
-        lastX = targetX;
-        lastY = targetY;
-        lastZ = targetZ;
-
-        do
-        {
-            length += step;
-
-            hLength = (length * Math.cos(Math.toRadians(yRotation)));
-            yOffset = (length * Math.sin(Math.toRadians(yRotation)));
-            xOffset = (hLength * Math.cos(Math.toRadians(xRotation)));
-            zOffset = (hLength * Math.sin(Math.toRadians(xRotation)));
-
-            targetX = (int) Math.floor(xOffset + playerLocation.getX());
-            targetY = (int) Math.floor(yOffset + playerLocation.getY() + viewHeight);
-            targetZ = (int) Math.floor(zOffset + playerLocation.getZ());
-
-        }
-        while ((length <= range) && ((targetX == lastX) && (targetY == lastY) && (targetZ == lastZ)));
-
-        if (length > range)
-        {
-            if (allowMaxRange)
-            {
-                return getBlockAt(targetX, targetY, targetZ);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        return getBlockAt(targetX, targetY, targetZ);
+        return xRotation;
     }
 
     /**
-     * Returns the current block along the line of vision
+     * Get the (simplified) player pitch.
      * 
-     * @return The block
+     * @return Player Y-axis rotation (pitch)
      */
-    public Block getCurBlock()
+    public double getYRotation()
     {
-        if (length > range && !allowMaxRange)
-        {
-            return null;
-        }
-        else
-        {
-            return getBlockAt(targetX, targetY, targetZ);
-        }
+        return yRotation;
     }
 
-    /**
-     * Returns the previous block along the line of vision
-     * 
-     * @return The block
+    /*
+     * Ground / location search and test function functions
      */
-    public Block getLastBlock()
+    public boolean isOkToStandIn(Material mat)
     {
-        return getBlockAt(lastX, lastY, lastZ);
+        return mat == Material.AIR || mat == Material.WATER || mat == Material.STATIONARY_WATER;
     }
 
-    /**
-     * Returns the block at the specified location
-     * 
-     * Just a wrapper for world.getBlock at this point.
-     * 
-     * @param x
-     * @param y
-     * @param z
-     * @return block The block at the specified coordinates
-     */
-    public Block getBlockAt(int x, int y, int z)
+    public boolean isOkToStandOn(Material mat)
     {
-        World world = player.getWorld();
-        return world.getBlockAt(x, y, z);
+        return mat != Material.AIR && mat != Material.LAVA && mat != Material.STATIONARY_LAVA;
     }
-    
+
+    public boolean isReverseTargeting()
+    {
+        return reverseTargeting;
+    }
+
+    public boolean isTargetable(Material mat)
+    {
+        Boolean checkMat = targetThroughMaterials.get(mat);
+        if (reverseTargeting)
+        {
+            return checkMat != null && checkMat;
+        }
+        return checkMat == null || !checkMat;
+    }
+
+    public void noTargetThrough(Material mat)
+    {
+        targetThroughMaterials.put(mat, false);
+    }
 
     protected void reset()
     {
@@ -438,63 +503,25 @@ public class Targeting
         targetingComplete = false;
     }
 
-    protected void findTargetBlock()
-    {
-        if (targetingComplete)
-        {
-            return;
-        }
-
-        while (getNextBlock() != null)
-        {
-            Block block = getCurBlock();
-            if (isTargetable(block.getType()))
-            {
-                boolean enoughSpace = true;
-                for (int i = 1; i < targetHeightRequired; i++)
-                {
-                    block = block.getFace(BlockFace.UP);
-                    if (!isTargetable(block.getType()))
-                    {
-                        enoughSpace = false;
-                        break;
-                    }
-                }
-                if (enoughSpace) break;
-            }
-        }
-        targetingComplete = true;
-    }
-    
     protected void setMaxRange(int range, boolean allow)
     {
         this.range = range;
         this.allowMaxRange = allow;
     }
 
-    private final Player               player;
+    public void setReverseTargeting(boolean reverse)
+    {
+        reverseTargeting = reverse;
+    }
 
-    private boolean                    allowMaxRange          = false;
-    private int                        lastX                  = 0;
-    private int                        lastY                  = 0;
-    private int                        lastZ                  = 0;
-    private double                     length                 = 0;
-    private double                     hLength                = 0;
-    private Location                   playerLocation;
-    private int                        range                  = 200;
-    private boolean                    reverseTargeting       = false;
-    private double                     step                   = 0.2;
-    private int                        targetHeightRequired   = 1;
-    private boolean                    targetingComplete      = false;
-    private HashMap<Material, Boolean> targetThroughMaterials = new HashMap<Material, Boolean>();
-    private int                        targetX                = 0;
-    private int                        targetY                = 0;
-    private int                        targetZ                = 0;
-    private double                     viewHeight             = 1.65;
-    private double                     xOffset                = 0;
-    private double                     yOffset                = 0;
-    private double                     zOffset                = 0;
-    private double                     xRotation              = 0;
-    private double                     yRotation              = 0;
+    public void setTargetHeightRequired(int height)
+    {
+        targetHeightRequired = height;
+    }
+
+    public void targetThrough(Material mat)
+    {
+        targetThroughMaterials.put(mat, true);
+    }
 
 }

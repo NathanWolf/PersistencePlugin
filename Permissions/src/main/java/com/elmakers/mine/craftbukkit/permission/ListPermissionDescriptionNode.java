@@ -8,10 +8,7 @@ import java.util.Map;
  */
 public class ListPermissionDescriptionNode extends PermissionDescriptionNode
 {
-    public ListPermissionDescriptionNode(
-            final PermissionDescriptionNode parent, Map<String, Object> map)
-            throws PermissionDescriptionException,
-            PermissionDescriptionNodeException
+    public ListPermissionDescriptionNode(final PermissionDescriptionNode parent, Map<String, Object> map) throws PermissionDescriptionException, PermissionDescriptionNodeException
     {
         super(parent, map);
     }

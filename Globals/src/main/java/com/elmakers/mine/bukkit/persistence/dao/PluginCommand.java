@@ -64,8 +64,7 @@ public class PluginCommand extends Persisted implements
 
     }
 
-    protected PluginCommand(PluginData plugin, String commandName,
-            String tooltip, PermissionType pType)
+    protected PluginCommand(PluginData plugin, String commandName, String tooltip, PermissionType pType)
     {
         this.plugin = plugin;
         this.command = commandName;
@@ -326,8 +325,7 @@ public class PluginCommand extends Persisted implements
      *            The default usage string
      * @return A new command object
      */
-    public PluginCommand getSubCommand(String subCommandName,
-            String defaultTooltip, String defaultUsage)
+    public PluginCommand getSubCommand(String subCommandName, String defaultTooltip, String defaultUsage)
     {
         return getSubCommand(subCommandName, defaultTooltip, defaultUsage, PermissionType.DEFAULT);
     }
@@ -347,8 +345,7 @@ public class PluginCommand extends Persisted implements
      *            The type of permissions to apply
      * @return A new command object
      */
-    public PluginCommand getSubCommand(String subCommandName,
-            String defaultTooltip, String defaultUsage, PermissionType pType)
+    public PluginCommand getSubCommand(String subCommandName, String defaultTooltip, String defaultUsage, PermissionType pType)
     {
         PluginCommand child = childMap.get(subCommandName);
         if (child == null)
@@ -407,8 +404,7 @@ public class PluginCommand extends Persisted implements
      * @param showSubCommands
      *            Whether or not to also display a tree of sub-command usage
      */
-    public void sendHelp(CommandSender sender, String prefix,
-            boolean showUsage, boolean showSubCommands)
+    public void sendHelp(CommandSender sender, String prefix, boolean showUsage, boolean showSubCommands)
     {
         boolean useSlash = sender instanceof Player;
         String slash = useSlash ? "/" : "";

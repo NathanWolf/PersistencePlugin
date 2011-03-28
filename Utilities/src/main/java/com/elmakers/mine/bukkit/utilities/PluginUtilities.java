@@ -16,6 +16,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 
 import com.elmakers.mine.bukkit.persistence.Persistence;
 import com.elmakers.mine.bukkit.persistence.dao.CommandSenderData;
+import com.elmakers.mine.bukkit.persistence.dao.MaterialList;
 import com.elmakers.mine.bukkit.persistence.dao.Message;
 import com.elmakers.mine.bukkit.persistence.dao.PermissionType;
 import com.elmakers.mine.bukkit.persistence.dao.PlayerData;
@@ -83,8 +84,7 @@ public class PluginUtilities
         playerSender = persistence.get("player", CommandSenderData.class);
     }
 
-    protected boolean dispatch(List<Object> listeners, CommandSender sender,
-            PluginCommand command, String commandString, String[] parameters)
+    protected boolean dispatch(List<Object> listeners, CommandSender sender, PluginCommand command, String commandString, String[] parameters)
     {
         if (command != null && command.checkCommand(sender, commandString))
         {
@@ -233,8 +233,7 @@ public class PluginUtilities
      *            Any parameters (or sub-commands) passed to the base command
      * @see PluginCommand#bind(String)
      */
-    public boolean dispatch(List<Object> listeners, CommandSender sender,
-            String baseCommand, String[] baseParameters)
+    public boolean dispatch(List<Object> listeners, CommandSender sender, String baseCommand, String[] baseParameters)
     {
         List<PluginCommand> baseCommands = plugin.getCommands();
         if (baseCommands == null)
@@ -278,8 +277,7 @@ public class PluginUtilities
      *            Any parameters (or sub-commands) passed to the base command
      * @see PluginCommand#bind(String)
      */
-    public boolean dispatch(Object listener, CommandSender sender,
-            String baseCommand, String[] baseParameters)
+    public boolean dispatch(Object listener, CommandSender sender, String baseCommand, String[] baseParameters)
     {
         List<Object> listeners = new ArrayList<Object>();
         listeners.add(listener);
@@ -302,8 +300,7 @@ public class PluginUtilities
      *            The sender that will issue this command
      * @return A command descriptor
      */
-    public PluginCommand getCommand(String commandName, String defaultTooltip,
-            String defaultUsage, CommandSenderData sender, PermissionType pType)
+    public PluginCommand getCommand(String commandName, String defaultTooltip, String defaultUsage, CommandSenderData sender, PermissionType pType)
     {
         return plugin.getCommand(commandName, defaultTooltip, defaultUsage, sender, pType);
     }
@@ -325,8 +322,7 @@ public class PluginUtilities
      *            The default usage string, more can be added
      * @return A command descriptor
      */
-    public PluginCommand getGeneralCommand(String commandName,
-            String defaultTooltip, String defaultUsage)
+    public PluginCommand getGeneralCommand(String commandName, String defaultTooltip, String defaultUsage)
     {
         return getGeneralCommand(commandName, defaultTooltip, defaultUsage, PermissionType.DEFAULT);
     }
@@ -352,10 +348,14 @@ public class PluginUtilities
      *            The type of permissions to apply to this command
      * @return A command descriptor
      */
-    public PluginCommand getGeneralCommand(String commandName,
-            String defaultTooltip, String defaultUsage, PermissionType pType)
+    public PluginCommand getGeneralCommand(String commandName, String defaultTooltip, String defaultUsage, PermissionType pType)
     {
         return getCommand(commandName, defaultTooltip, defaultUsage, null, pType);
+    }
+
+    public MaterialList getMaterialList(String listName)
+    {
+        return plugin.getMaterialList(listName);
     }
 
     /**
@@ -409,8 +409,7 @@ public class PluginUtilities
      *            The default usage string, more can be added
      * @return A command descriptor
      */
-    public PluginCommand getPlayerCommand(String commandName,
-            String defaultTooltip, String defaultUsage)
+    public PluginCommand getPlayerCommand(String commandName, String defaultTooltip, String defaultUsage)
     {
         return getPlayerCommand(commandName, defaultTooltip, defaultUsage, PermissionType.DEFAULT);
     }
@@ -433,8 +432,7 @@ public class PluginUtilities
      *            The type of permissions to apply to this command
      * @return A command descriptor
      */
-    public PluginCommand getPlayerCommand(String commandName,
-            String defaultTooltip, String defaultUsage, PermissionType pType)
+    public PluginCommand getPlayerCommand(String commandName, String defaultTooltip, String defaultUsage, PermissionType pType)
     {
         return getCommand(commandName, defaultTooltip, defaultUsage, playerSender, pType);
     }
@@ -475,8 +473,7 @@ public class PluginUtilities
         return data;
     }
 
-    public WorldData loadWorld(Server server, String name,
-            Environment defaultType)
+    public WorldData loadWorld(Server server, String name, Environment defaultType)
     {
         WorldData data = getWorld(server, name);
         if (data == null)

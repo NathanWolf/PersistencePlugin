@@ -31,16 +31,64 @@ import com.elmakers.mine.bukkit.persistence.exception.InvalidPersistedClassExcep
  */
 public class PersistedList extends PersistedField implements PersistedReference
 {
-    private static int                                   deferStackDepth     = 0;
-    private final HashMap<Object, DeferredReferenceList> deferredInstanceMap = new HashMap<Object, DeferredReferenceList>();
-    private static final List<PersistedList>             deferredLists       = new ArrayList<PersistedList>();
+    class DeferredReferenceList
+    {
+        public List<Object>  idList;
+        public PersistedList referenceList;
 
-    protected String                                     tableName;
-    protected Class<?>                                   listType;
+        public DeferredReferenceList(PersistedList listField)
+        {
+            referenceList = listField;
+        }
+    }
+
+    private static final List<PersistedList> deferredLists   = new ArrayList<PersistedList>();
+    private static int                       deferStackDepth = 0;
+
+    public static void beginDefer()
+    {
+        deferStackDepth++;
+    }
+
+    public static void endDefer()
+    {
+        deferStackDepth--;
+        if (deferStackDepth > 0)
+        {
+            return;
+        }
+
+        List<PersistedList> lists = new ArrayList<PersistedList>();
+        lists.addAll(deferredLists);
+        deferredLists.clear();
+        for (PersistedList list : lists)
+        {
+            list.bindDeferredInstances();
+        }
+    }
+
+    private final HashMap<Object, DeferredReferenceList> deferredInstanceMap = new HashMap<Object, DeferredReferenceList>();
+
     protected DataType                                   listDataType;
+
+    protected Class<?>                                   listType;
 
     // Only valid for Lists of Objects
     protected PersistentClass                            referenceType       = null;
+
+    protected String                                     tableName;
+
+    public PersistedList(FieldInfo fieldInfo, Field field, PersistentClass owningClass)
+    {
+        super(fieldInfo, field, owningClass);
+        findListType();
+    }
+
+    public PersistedList(FieldInfo fieldInfo, Method getter, Method setter, PersistentClass owningClass)
+    {
+        super(fieldInfo, getter, setter, owningClass);
+        findListType();
+    }
 
     public PersistedList(PersistedList copy)
     {
@@ -62,27 +110,6 @@ public class PersistedList extends PersistedField implements PersistedReference
         {
             referenceType = copy.referenceType;
         }
-        findListType();
-    }
-
-    @Override
-    public PersistedList clone()
-    {
-        PersistedList field = new PersistedList(this);
-        return field;
-    }
-
-    public PersistedList(FieldInfo fieldInfo, Field field,
-            PersistentClass owningClass)
-    {
-        super(fieldInfo, field, owningClass);
-        findListType();
-    }
-
-    public PersistedList(FieldInfo fieldInfo, Method getter, Method setter,
-            PersistentClass owningClass)
-    {
-        super(fieldInfo, getter, setter, owningClass);
         findListType();
     }
 
@@ -122,113 +149,44 @@ public class PersistedList extends PersistedField implements PersistedReference
         }
     }
 
-    public void load(DataTable subTable, List<Object> instances)
-            throws InvalidDataException
+    public void bindDeferredInstances()
     {
-        load(subTable, instances, null);
-    }
 
-    public String getReferenceIdName()
-    {
-        if (referenceType == null)
+        for (Object instance : deferredInstanceMap.keySet())
         {
-            return null;
+            List<Object> references = new ArrayList<Object>();
+            DeferredReferenceList ref = deferredInstanceMap.get(instance);
+            for (Object id : ref.idList)
+            {
+                if (id == null)
+                {
+                    references.add(null);
+                }
+                else
+                {
+                    Object reference = ref.referenceList.referenceType.get(id);
+                    references.add(reference);
+                }
+            }
+
+            try
+            {
+                ref.referenceList.set(instance, references);
+            }
+            catch (InvalidDataException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
-
-        // Construct a field name using the name of the reference id
-        return referenceType.getContainedIdName(this);
-    }
-
-    // PersistedReference interface
-    public boolean isObject()
-    {
-        return listDataType == DataType.OBJECT;
+        deferredInstanceMap.clear();
     }
 
     @Override
-    public PersistentClass getReferenceType()
+    public PersistedList clone()
     {
-        return referenceType;
-    }
-
-    protected void populate(DataRow dataRow, Object instance, Object data)
-    {
-        populate(dataRow, instance, data, null);
-    }
-
-    protected void populate(DataRow dataRow, Object instance, Object data,
-            PersistedField container)
-    {
-        PersistedField idField = owningClass.getIdField();
-
-        // Add id row first, this binds to the owning class
-        Object id = null;
-        if (instance != null)
-        {
-            id = owningClass.getIdData(instance);
-        }
-        String idName = owningClass.getContainedIdName();
-        DataField idData = new DataField(idName, idField.getDataType(), id);
-        idData.setIdField(true);
-        dataRow.add(idData);
-
-        // Add data rows
-        if (referenceType == null)
-        {
-            DataField valueData = new DataField(getDataName(), listDataType);
-            valueData.setIdField(true);
-            if (data != null)
-            {
-                valueData.setValue(data);
-            }
-            dataRow.add(valueData);
-        }
-        else if (isContained())
-        {
-            referenceType.populate(dataRow, data);
-        }
-        else
-        {
-            PersistedField referenceIdField = referenceType.getIdField();
-            DataField referenceIdData = new DataField(getReferenceIdName(), referenceIdField.getDataType());
-            if (data != null)
-            {
-                Object referenceId = referenceIdField.get(data);
-                referenceIdData.setValue(referenceId);
-            }
-            referenceIdData.setIdField(true);
-            dataRow.add(referenceIdData);
-        }
-    }
-
-    @Override
-    public void populateHeader(DataTable dataTable, PersistedField container)
-    {
-        dataTable.createHeader();
-        DataRow headerRow = dataTable.getHeader();
-        populate(headerRow, null, null, container);
-    }
-
-    public void save(DataTable table, Object instance)
-    {
-        if (instance == null)
-        {
-            return;
-        }
-
-        @SuppressWarnings("unchecked")
-        List<? extends Object> list = (List<? extends Object>) get(instance);
-        if (list == null)
-        {
-            return;
-        }
-
-        for (Object data : list)
-        {
-            DataRow row = new DataRow(table);
-            populate(row, instance, data);
-            table.addRow(row);
-        }
+        PersistedList field = new PersistedList(this);
+        return field;
     }
 
     protected void findListType()
@@ -250,21 +208,6 @@ public class PersistedList extends PersistedField implements PersistedReference
         tableName = owningClass.getTableName() + tableName;
     }
 
-    public Class<?> getListType()
-    {
-        return listType;
-    }
-
-    public DataType getListDataType()
-    {
-        return listDataType;
-    }
-
-    public String getTableName()
-    {
-        return tableName;
-    }
-
     protected Type getGenericType()
     {
         Type genericType = null;
@@ -279,13 +222,50 @@ public class PersistedList extends PersistedField implements PersistedReference
         return genericType;
     }
 
-    public static void beginDefer()
+    public DataType getListDataType()
     {
-        deferStackDepth++;
+        return listDataType;
     }
 
-    public void load(DataTable subTable, List<Object> instances,
-            PersistedField container) throws InvalidDataException
+    public Class<?> getListType()
+    {
+        return listType;
+    }
+
+    public String getReferenceIdName()
+    {
+        if (referenceType == null)
+        {
+            return null;
+        }
+
+        // Construct a field name using the name of the reference id
+        return referenceType.getContainedIdName(this);
+    }
+
+    @Override
+    public PersistentClass getReferenceType()
+    {
+        return referenceType;
+    }
+
+    public String getTableName()
+    {
+        return tableName;
+    }
+
+    // PersistedReference interface
+    public boolean isObject()
+    {
+        return listDataType == DataType.OBJECT;
+    }
+
+    public void load(DataTable subTable, List<Object> instances) throws InvalidDataException
+    {
+        load(subTable, instances, null);
+    }
+
+    public void load(DataTable subTable, List<Object> instances, PersistedField container) throws InvalidDataException
     {
         // Load data for all lists in all instances at once, mapping to
         // correct instances based on the id column.
@@ -388,64 +368,82 @@ public class PersistedList extends PersistedField implements PersistedReference
         }
     }
 
-    public static void endDefer()
+    protected void populate(DataRow dataRow, Object instance, Object data)
     {
-        deferStackDepth--;
-        if (deferStackDepth > 0)
+        populate(dataRow, instance, data, null);
+    }
+
+    protected void populate(DataRow dataRow, Object instance, Object data, PersistedField container)
+    {
+        PersistedField idField = owningClass.getIdField();
+
+        // Add id row first, this binds to the owning class
+        Object id = null;
+        if (instance != null)
+        {
+            id = owningClass.getIdData(instance);
+        }
+        String idName = owningClass.getContainedIdName();
+        DataField idData = new DataField(idName, idField.getDataType(), id);
+        idData.setIdField(true);
+        dataRow.add(idData);
+
+        // Add data rows
+        if (referenceType == null)
+        {
+            DataField valueData = new DataField(getDataName(), listDataType);
+            valueData.setIdField(true);
+            if (data != null)
+            {
+                valueData.setValue(data);
+            }
+            dataRow.add(valueData);
+        }
+        else if (isContained())
+        {
+            referenceType.populate(dataRow, data);
+        }
+        else
+        {
+            PersistedField referenceIdField = referenceType.getIdField();
+            DataField referenceIdData = new DataField(getReferenceIdName(), referenceIdField.getDataType());
+            if (data != null)
+            {
+                Object referenceId = referenceIdField.get(data);
+                referenceIdData.setValue(referenceId);
+            }
+            referenceIdData.setIdField(true);
+            dataRow.add(referenceIdData);
+        }
+    }
+
+    @Override
+    public void populateHeader(DataTable dataTable, PersistedField container)
+    {
+        dataTable.createHeader();
+        DataRow headerRow = dataTable.getHeader();
+        populate(headerRow, null, null, container);
+    }
+
+    public void save(DataTable table, Object instance)
+    {
+        if (instance == null)
         {
             return;
         }
 
-        List<PersistedList> lists = new ArrayList<PersistedList>();
-        lists.addAll(deferredLists);
-        deferredLists.clear();
-        for (PersistedList list : lists)
+        @SuppressWarnings("unchecked")
+        List<? extends Object> list = (List<? extends Object>) get(instance);
+        if (list == null)
         {
-            list.bindDeferredInstances();
+            return;
         }
-    }
 
-    public void bindDeferredInstances()
-    {
-
-        for (Object instance : deferredInstanceMap.keySet())
+        for (Object data : list)
         {
-            List<Object> references = new ArrayList<Object>();
-            DeferredReferenceList ref = deferredInstanceMap.get(instance);
-            for (Object id : ref.idList)
-            {
-                if (id == null)
-                {
-                    references.add(null);
-                }
-                else
-                {
-                    Object reference = ref.referenceList.referenceType.get(id);
-                    references.add(reference);
-                }
-            }
-
-            try
-            {
-                ref.referenceList.set(instance, references);
-            }
-            catch (InvalidDataException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        deferredInstanceMap.clear();
-    }
-
-    class DeferredReferenceList
-    {
-        public PersistedList referenceList;
-        public List<Object>  idList;
-
-        public DeferredReferenceList(PersistedList listField)
-        {
-            referenceList = listField;
+            DataRow row = new DataRow(table);
+            populate(row, instance, data);
+            table.addRow(row);
         }
     }
 }

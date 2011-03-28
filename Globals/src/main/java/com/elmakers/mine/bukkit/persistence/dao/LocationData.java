@@ -52,8 +52,7 @@ public class LocationData extends Persisted
      * @param y
      * @param z
      */
-    public LocationData(final World world, final double x, final double y,
-            final double z)
+    public LocationData(final World world, final double x, final double y, final double z)
     {
         position = new BlockVector(x, y, z);
         worldData = getPersistence().get(world.getName(), WorldData.class);
@@ -70,8 +69,7 @@ public class LocationData extends Persisted
      * @param yaw
      * @param pitch
      */
-    public LocationData(final World world, final double x, final double y,
-            final double z, final float yaw, final float pitch)
+    public LocationData(final World world, final double x, final double y, final double z, final float yaw, final float pitch)
     {
         position = new BlockVector(x, y, z);
         worldData = getPersistence().get(world.getName(), WorldData.class);

@@ -29,17 +29,17 @@ public class MaterialList implements Collection<MaterialData>
 	 */
     private static final long         serialVersionUID = 1L;
 
+    protected HashSet<MaterialData>   dataMap          = null;
+
     protected String                  id               = null;
 
     // Need an extra list for persistence, for now
     protected ArrayList<MaterialData> materialList     = null;
-
     protected HashSet<Material>       materialMap      = null;
-    protected HashSet<MaterialData>   dataMap          = null;
 
     public MaterialList()
     {
-        
+
     }
 
     public MaterialList(String id)
@@ -47,26 +47,9 @@ public class MaterialList implements Collection<MaterialData>
         this.id = id;
     }
 
-    @PersistField(id=true)
-    public String getId()
+    public void add(Block block)
     {
-        return id;
-    }
-
-    public void setId(String id)
-    {
-        this.id = id;
-    }
-
-    @PersistField(name="materials")
-    public ArrayList<MaterialData> getMaterialList()
-    {
-        return materialList;
-    }
-
-    public void setMaterialList(ArrayList<MaterialData> materialList)
-    {
-        this.materialList = materialList;
+        add(new MaterialData(block));
     }
 
     public boolean add(Material material)
@@ -95,11 +78,6 @@ public class MaterialList implements Collection<MaterialData>
         return true;
     }
 
-    public void add(Block block)
-    {
-        add(new MaterialData(block));
-    }
-
     public boolean addAll(Collection<? extends MaterialData> materials)
     {
         if (materials == null)
@@ -125,20 +103,11 @@ public class MaterialList implements Collection<MaterialData>
         {
             materialMap.clear();
         }
-        
+
         if (materialList != null)
         {
             materialList.clear();
         }
-    }
-
-    public boolean contains(Object o)
-    {
-        if (dataMap == null)
-        {
-            return false;
-        }
-        return dataMap.contains(o);
     }
 
     public boolean contains(Material material)
@@ -159,14 +128,35 @@ public class MaterialList implements Collection<MaterialData>
         return false;
     }
 
+    public boolean contains(Object o)
+    {
+        if (dataMap == null)
+        {
+            return false;
+        }
+        return dataMap.contains(o);
+    }
+
     public boolean containsAll(Collection<?> other)
     {
         if (dataMap == null)
         {
-            return (other == null || other.size() == 0);
+            return other == null || other.size() == 0;
         }
 
         return dataMap.containsAll(other);
+    }
+
+    @PersistField(id = true)
+    public String getId()
+    {
+        return id;
+    }
+
+    @PersistField(name = "materials")
+    public ArrayList<MaterialData> getMaterialList()
+    {
+        return materialList;
     }
 
     public boolean isEmpty()
@@ -205,11 +195,11 @@ public class MaterialList implements Collection<MaterialData>
                 dataMap.remove(checkData);
             }
         }
-        
+
         materialList.remove(material);
         return materialMap.remove(material);
     }
-    
+
     public boolean remove(MaterialData material)
     {
         if (dataMap == null || materialMap == null || materialList == null)
@@ -221,10 +211,10 @@ public class MaterialList implements Collection<MaterialData>
         materialMap.remove(material.getType());
         return dataMap.remove(material);
     }
-    
+
     public boolean remove(Object o)
     {
-        return false;    
+        return false;
     }
 
     public boolean removeAll(Collection<? extends Object> materials)
@@ -237,11 +227,11 @@ public class MaterialList implements Collection<MaterialData>
         {
             if (material instanceof Material)
             {
-                add((Material)material);
+                add((Material) material);
             }
             else if (material instanceof MaterialData)
             {
-                add((MaterialData)material);
+                add((MaterialData) material);
             }
         }
 
@@ -254,13 +244,23 @@ public class MaterialList implements Collection<MaterialData>
         return false;
     }
 
+    public void setId(String id)
+    {
+        this.id = id;
+    }
+
+    public void setMaterialList(ArrayList<MaterialData> materialList)
+    {
+        this.materialList = materialList;
+    }
+
     public int size()
     {
         if (dataMap == null)
         {
             return 0;
         }
-        
+
         return dataMap.size();
     }
 
@@ -270,7 +270,7 @@ public class MaterialList implements Collection<MaterialData>
         {
             return null;
         }
-        
+
         return dataMap.toArray();
     }
 
@@ -280,7 +280,7 @@ public class MaterialList implements Collection<MaterialData>
         {
             return null;
         }
-        
+
         return dataMap.toArray(other);
     }
 }

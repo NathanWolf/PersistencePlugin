@@ -11,16 +11,12 @@ public class MapPermissionDescriptionNode extends PermissionDescriptionNode
 {
     protected final Map<String, PermissionDescriptionNode> nodes = new HashMap<String, PermissionDescriptionNode>();
 
-    protected MapPermissionDescriptionNode(Map<String, Object> map)
-            throws PermissionDescriptionException,
-            PermissionDescriptionNodeException
+    protected MapPermissionDescriptionNode(Map<String, Object> map) throws PermissionDescriptionException, PermissionDescriptionNodeException
     {
         super(null, map);
     }
 
-    public MapPermissionDescriptionNode(final PermissionDescriptionNode parent,
-            Map<String, Object> map) throws PermissionDescriptionException,
-            PermissionDescriptionNodeException
+    public MapPermissionDescriptionNode(final PermissionDescriptionNode parent, Map<String, Object> map) throws PermissionDescriptionException, PermissionDescriptionNodeException
     {
         super(parent, map);
 
@@ -68,8 +64,7 @@ public class MapPermissionDescriptionNode extends PermissionDescriptionNode
         return false;
     }
 
-    protected final void loadMap(final Map<String, Object> map)
-            throws PermissionDescriptionException
+    protected final void loadMap(final Map<String, Object> map) throws PermissionDescriptionException
     {
         final Set<String> keys = map.keySet();
 

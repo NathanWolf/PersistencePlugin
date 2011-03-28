@@ -10,8 +10,7 @@ import com.elmakers.mine.bukkit.data.DataType;
 
 public class SqlDataField extends DataField
 {
-    public static void setValue(PreparedStatement ps, int fieldIndex,
-            Object value, DataType dataType) throws SQLException
+    public static void setValue(PreparedStatement ps, int fieldIndex, Object value, DataType dataType) throws SQLException
     {
         if (value == null)
         {
@@ -82,8 +81,7 @@ public class SqlDataField extends DataField
         ps.setObject(fieldIndex, value);
     }
 
-    protected SqlDataField(ResultSet rs, int index, String fieldName,
-            DataType dataType)
+    protected SqlDataField(ResultSet rs, int index, String fieldName, DataType dataType)
     {
         super(fieldName, dataType);
 

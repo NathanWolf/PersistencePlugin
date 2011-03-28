@@ -59,8 +59,7 @@ public class PermissionManager implements PermissionHandler
         handlers.add(handler);
     }
 
-    public void addPluginRootPermission(String pluginName,
-            RootPermissionDescription rootNode)
+    public void addPluginRootPermission(String pluginName, RootPermissionDescription rootNode)
     {
         if (permissions.get(pluginName) != null)
         {

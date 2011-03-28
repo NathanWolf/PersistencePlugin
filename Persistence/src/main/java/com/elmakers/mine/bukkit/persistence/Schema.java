@@ -16,25 +16,15 @@ import com.elmakers.mine.bukkit.data.DataStore;
  */
 public class Schema
 {
-    private String                                 name;
     private final DataStore                        defaultStore;
-    private final List<PersistentClass>            persistedClasses = new ArrayList<PersistentClass>();
+    private String                                 name;
     private final HashMap<String, PersistentClass> nameMap          = new HashMap<String, PersistentClass>();
+    private final List<PersistentClass>            persistedClasses = new ArrayList<PersistentClass>();
 
     public Schema(String name, DataStore defaultStore)
     {
         this.name = name;
         this.defaultStore = defaultStore;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
     }
 
     public void addPersistedClass(PersistentClass persistedClass)
@@ -43,9 +33,17 @@ public class Schema
         nameMap.put(persistedClass.getTableName(), persistedClass);
     }
 
-    public List<PersistentClass> getPersistedClasses()
+    public void disconnect()
     {
-        return persistedClasses;
+        if (defaultStore != null)
+        {
+            defaultStore.disconnect();
+        }
+    }
+
+    public String getName()
+    {
+        return name;
     }
 
     public PersistentClass getPersistedClass(String className)
@@ -53,16 +51,18 @@ public class Schema
         return nameMap.get(className);
     }
 
+    public List<PersistentClass> getPersistedClasses()
+    {
+        return persistedClasses;
+    }
+
     public DataStore getStore()
     {
         return defaultStore;
     }
 
-    public void disconnect()
+    public void setName(String name)
     {
-        if (defaultStore != null)
-        {
-            defaultStore.disconnect();
-        }
+        this.name = name;
     }
 }

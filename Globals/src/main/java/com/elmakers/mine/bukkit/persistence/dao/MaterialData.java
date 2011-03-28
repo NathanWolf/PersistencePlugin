@@ -18,7 +18,7 @@ import com.elmakers.mine.bukkit.persisted.Persisted;
 @PersistClass(schema = "global", name = "material")
 public class MaterialData extends Persisted
 {
-    protected short     data;
+    protected short    data;
     protected Material type;
 
     public MaterialData()
@@ -31,12 +31,12 @@ public class MaterialData extends Persisted
         this.type = block.getType();
         this.data = block.getData();
     }
-    
+
     public MaterialData(ItemStack stack)
     {
         if (stack != null)
         {
-            this.data = (byte)stack.getDurability();
+            this.data = (byte) stack.getDurability();
             this.type = stack.getType();
         }
     }
@@ -53,37 +53,21 @@ public class MaterialData extends Persisted
         this.data = data;
     }
 
-
-    @PersistField
-    public Material getType()
-    {
-        return type;
-    }
-
-    public void setType(Material type)
-    {
-        this.type = type;
-    }
-    
     @PersistField
     public byte getData()
     {
-        return (byte)data;
-    }
-    
-    public void setData(byte data)
-    {
-        this.data = data;
-    }
-    
-    public void setDurability(short durability)
-    {
-        this.data = durability;
+        return (byte) data;
     }
 
     public short getDurability()
     {
         return data;
+    }
+
+    @PersistField
+    public Material getType()
+    {
+        return type;
     }
 
     /**
@@ -96,6 +80,21 @@ public class MaterialData extends Persisted
     public int hashCode()
     {
         int materialHash = type.hashCode();
-        return (materialHash << 8) | (data & 0xFF);
+        return materialHash << 8 | data & 0xFF;
+    }
+
+    public void setData(byte data)
+    {
+        this.data = data;
+    }
+
+    public void setDurability(short durability)
+    {
+        this.data = durability;
+    }
+
+    public void setType(Material type)
+    {
+        this.type = type;
     }
 }

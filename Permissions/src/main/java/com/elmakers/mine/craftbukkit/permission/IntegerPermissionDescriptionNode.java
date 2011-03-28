@@ -10,10 +10,7 @@ public class IntegerPermissionDescriptionNode extends PermissionDescriptionNode
     private int maximum = Integer.MAX_VALUE;
     private int minimum = Integer.MIN_VALUE;
 
-    public IntegerPermissionDescriptionNode(
-            final PermissionDescriptionNode parent, Map<String, Object> map)
-            throws PermissionDescriptionException,
-            PermissionDescriptionNodeException
+    public IntegerPermissionDescriptionNode(final PermissionDescriptionNode parent, Map<String, Object> map) throws PermissionDescriptionException, PermissionDescriptionNodeException
     {
         super(parent, map);
     }

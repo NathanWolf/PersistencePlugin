@@ -21,10 +21,7 @@ public class PermissionProfile implements Permissions
 {
     private static final Yaml yaml = new Yaml(new SafeConstructor());
 
-    public static PermissionProfile loadProfile(
-            final PermissionManager manager, final Server server,
-            final String name, final Map<String, Object> map)
-            throws InvalidPermissionProfileException
+    public static PermissionProfile loadProfile(final PermissionManager manager, final Server server, final String name, final Map<String, Object> map) throws InvalidPermissionProfileException
     {
         PermissionProfile result = new PermissionProfile(manager, server, name);
         Set<String> keys = map.keySet();
@@ -37,17 +34,12 @@ public class PermissionProfile implements Permissions
         return result;
     }
 
-    public static PermissionProfile[] loadProfiles(
-            final PermissionManager manager, final Server server,
-            final InputStream stream) throws InvalidPermissionProfileException
+    public static PermissionProfile[] loadProfiles(final PermissionManager manager, final Server server, final InputStream stream) throws InvalidPermissionProfileException
     {
         return loadProfiles(manager, server, (Map<String, Object>) yaml.load(stream));
     }
 
-    public static PermissionProfile[] loadProfiles(
-            final PermissionManager manager, final Server server,
-            final Map<String, Object> map)
-            throws InvalidPermissionProfileException
+    public static PermissionProfile[] loadProfiles(final PermissionManager manager, final Server server, final Map<String, Object> map) throws InvalidPermissionProfileException
     {
         List<PermissionProfile> result = new ArrayList<PermissionProfile>();
         Set<String> keys = map.keySet();
@@ -67,9 +59,7 @@ public class PermissionProfile implements Permissions
         return result.toArray(new PermissionProfile[0]);
     }
 
-    public static PermissionProfile[] loadProfiles(
-            final PermissionManager manager, final Server server,
-            final Reader reader) throws InvalidPermissionProfileException
+    public static PermissionProfile[] loadProfiles(final PermissionManager manager, final Server server, final Reader reader) throws InvalidPermissionProfileException
     {
         return loadProfiles(manager, server, (Map<String, Object>) yaml.load(reader));
     }
@@ -82,8 +72,7 @@ public class PermissionProfile implements Permissions
 
     private final Map<String, Object> values = new HashMap<String, Object>();
 
-    public PermissionProfile(final PermissionManager manager,
-            final Server server, final String name)
+    public PermissionProfile(final PermissionManager manager, final Server server, final String name)
     {
         this.server = server;
         this.name = name;
@@ -115,8 +104,7 @@ public class PermissionProfile implements Permissions
         return values.containsKey(key);
     }
 
-    private void loadNode(final String path, Object node)
-            throws InvalidPermissionProfileException
+    private void loadNode(final String path, Object node) throws InvalidPermissionProfileException
     {
         if (node instanceof Map<?, ?>)
         {

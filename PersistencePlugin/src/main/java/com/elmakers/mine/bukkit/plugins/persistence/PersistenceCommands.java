@@ -72,8 +72,7 @@ public class PersistenceCommands
     private Message       unknownEntityMessage;
     private Message       unknownSchemaMessage;
 
-    protected void addCommands(CommandSender messageOutput,
-            PluginCommand command, List<PluginCommand> allCommands)
+    protected void addCommands(CommandSender messageOutput, PluginCommand command, List<PluginCommand> allCommands)
     {
         if (command.checkPermission(messageOutput))
         {
@@ -89,8 +88,7 @@ public class PersistenceCommands
         }
     }
 
-    protected void describeEntity(CommandSender messageOutput,
-            String schemaName, String entityName)
+    protected void describeEntity(CommandSender messageOutput, String schemaName, String entityName)
     {
         PersistentClass persisted = getEntity(messageOutput, schemaName, entityName);
         if (persisted == null)
@@ -122,8 +120,7 @@ public class PersistenceCommands
         }
     }
 
-    protected PersistentClass getEntity(CommandSender messageOutput,
-            String schemaName, String entityName)
+    protected PersistentClass getEntity(CommandSender messageOutput, String schemaName, String entityName)
     {
         Schema schema = persistence.getSchema(schemaName);
         if (schema == null)
@@ -145,8 +142,7 @@ public class PersistenceCommands
         return suCommand;
     }
 
-    public void initialize(PersistencePlugin plugin, Persistence persistence,
-            PluginUtilities utilities)
+    public void initialize(PersistencePlugin plugin, Persistence persistence, PluginUtilities utilities)
     {
         PersistenceDefaults d = new PersistenceDefaults();
         this.persistence = persistence;
@@ -239,8 +235,7 @@ public class PersistenceCommands
         return output + "]";
     }
 
-    protected void listEntities(CommandSender messageOutput, String schemaName,
-            String entityName)
+    protected void listEntities(CommandSender messageOutput, String schemaName, String entityName)
     {
         PersistentClass persisted = getEntity(messageOutput, schemaName, entityName);
         if (persisted == null)
@@ -303,8 +298,7 @@ public class PersistenceCommands
 
     }
 
-    protected void listEntity(CommandSender messageOutput, String schemaName,
-            String entityName, String id)
+    protected void listEntity(CommandSender messageOutput, String schemaName, String entityName, String id)
     {
         PersistentClass persisted = getEntity(messageOutput, schemaName, entityName);
         if (persisted == null)
@@ -389,8 +383,7 @@ public class PersistenceCommands
         }
     }
 
-    protected void listEntityIds(CommandSender messageOutput,
-            String schemaName, String entityName)
+    protected void listEntityIds(CommandSender messageOutput, String schemaName, String entityName)
     {
         PersistentClass persisted = getEntity(messageOutput, schemaName, entityName);
         if (persisted == null)
@@ -537,8 +530,7 @@ public class PersistenceCommands
         return true;
     }
 
-    public boolean onHelpPlugins(CommandSender messageOutput,
-            String[] parameters)
+    public boolean onHelpPlugins(CommandSender messageOutput, String[] parameters)
     {
         List<PluginData> plugins = new ArrayList<PluginData>();
         persistence.getAll(plugins, PluginData.class);
@@ -657,8 +649,7 @@ public class PersistenceCommands
         return String.format("%1$-" + maxColumnWidth + "s", column);
     }
 
-    protected void reloadEntity(CommandSender messageOutput, String schemaName,
-            String entityName)
+    protected void reloadEntity(CommandSender messageOutput, String schemaName, String entityName)
     {
         PersistentClass persisted = getEntity(messageOutput, schemaName, entityName);
         if (persisted == null)
@@ -670,8 +661,7 @@ public class PersistenceCommands
         persisted.clear();
     }
 
-    protected void resetEntity(CommandSender messageOutput, String schemaName,
-            String entityName)
+    protected void resetEntity(CommandSender messageOutput, String schemaName, String entityName)
     {
         PersistentClass persisted = getEntity(messageOutput, schemaName, entityName);
         if (persisted == null)

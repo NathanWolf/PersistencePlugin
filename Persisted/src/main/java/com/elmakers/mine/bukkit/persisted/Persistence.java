@@ -59,8 +59,7 @@ public interface Persistence
      *            The annotated Class to persist
      * @return The persisted class definition, or null if failure
      */
-    public PersistedClass getPersistedClass(Class<? extends Object> persistClass)
-            throws InvalidPersistedClassException;
+    public PersistedClass getPersistedClass(Class<? extends Object> persistClass) throws InvalidPersistedClassException;
 
     /**
      * Add an object to the data store.

@@ -19,8 +19,7 @@ public class BlockRecurse
         return affectedBlocks.size();
     }
 
-    protected void recurse(Block block, BlockRecurseAction recurseAction,
-            BlockList affectedBlocks, BlockFace nextFace, int rDepth)
+    protected void recurse(Block block, BlockRecurseAction recurseAction, BlockList affectedBlocks, BlockFace nextFace, int rDepth)
     {
         if (nextFace != null)
         {

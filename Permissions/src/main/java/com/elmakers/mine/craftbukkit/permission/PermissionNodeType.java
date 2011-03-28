@@ -36,8 +36,7 @@ public enum PermissionNodeType
 
     private final Class<? extends PermissionDescriptionNode> desc;
 
-    private PermissionNodeType(
-            final Class<? extends PermissionDescriptionNode> desc)
+    private PermissionNodeType(final Class<? extends PermissionDescriptionNode> desc)
     {
         this.desc = desc;
     }

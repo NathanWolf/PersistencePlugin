@@ -67,8 +67,7 @@ public class BoundingBox
      * @param maxZ
      *            The maximum Z value
      */
-    public BoundingBox(int minX, int minY, int minZ, int maxX, int maxY,
-            int maxZ)
+    public BoundingBox(int minX, int minY, int minZ, int maxX, int maxY, int maxZ)
     {
         min = new BlockVector(Math.min(minX, maxX), Math.min(minY, maxY), Math.min(minZ, maxZ));
         max = new BlockVector(Math.max(minX, maxX), Math.max(minY, maxY), Math.max(minZ, maxZ));
@@ -175,8 +174,7 @@ public class BoundingBox
      *            A BlockList, which will be filled with the blocks that are
      *            replaced
      */
-    public void fill(World world, Material material, MaterialList destructable,
-            BlockList affected)
+    public void fill(World world, Material material, MaterialList destructable, BlockList affected)
     {
         for (int x = min.getBlockX(); x < max.getBlockX(); x++)
         {

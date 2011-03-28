@@ -24,8 +24,7 @@ public class MySQLStore extends SqlStore
     }
 
     @Override
-    public String getConnectionString(String schema, String user,
-            String password)
+    public String getConnectionString(String schema, String user, String password)
     {
         return "jdbc:mysql://" + server + "/" + schema + "?user=" + user + "&password=" + password;
     }
