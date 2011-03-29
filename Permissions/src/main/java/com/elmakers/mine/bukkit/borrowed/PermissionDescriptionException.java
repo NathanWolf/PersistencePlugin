@@ -1,4 +1,4 @@
-package com.elmakers.mine.craftbukkit.permission;
+package com.elmakers.mine.bukkit.borrowed;
 
 /**
  * Thrown when attempting to deal with an invalid PermissionDescription

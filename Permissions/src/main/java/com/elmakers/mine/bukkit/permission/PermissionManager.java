@@ -23,14 +23,14 @@ import org.bukkit.plugin.Plugin;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
+import com.elmakers.mine.bukkit.borrowed.InvalidPermissionProfileException;
+import com.elmakers.mine.bukkit.borrowed.PermissionDescriptionException;
+import com.elmakers.mine.bukkit.borrowed.PermissionDescriptionNode;
+import com.elmakers.mine.bukkit.borrowed.PermissionDescriptionNodeException;
+import com.elmakers.mine.bukkit.borrowed.PermissionProfile;
+import com.elmakers.mine.bukkit.borrowed.RootPermissionDescription;
 import com.elmakers.mine.bukkit.permission.dao.ProfileData;
 import com.elmakers.mine.bukkit.persisted.Persistence;
-import com.elmakers.mine.craftbukkit.permission.InvalidPermissionProfileException;
-import com.elmakers.mine.craftbukkit.permission.PermissionDescriptionException;
-import com.elmakers.mine.craftbukkit.permission.PermissionDescriptionNode;
-import com.elmakers.mine.craftbukkit.permission.PermissionDescriptionNodeException;
-import com.elmakers.mine.craftbukkit.permission.PermissionProfile;
-import com.elmakers.mine.craftbukkit.permission.RootPermissionDescription;
 
 public class PermissionManager implements PermissionHandler
 {

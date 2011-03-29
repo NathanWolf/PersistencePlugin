@@ -28,6 +28,18 @@ public class CSVParser
         }
         return ints;
     }
+    
+    public List<String> parseStrings(String csvList)
+    {
+        List<String> strings = new ArrayList<String>();
+
+        String[] stringArray = csvList.split(",");
+        for (String s : stringArray)
+        {
+            strings.add(s);
+        }
+        return strings;
+    }
 
     public void parseMaterials(MaterialList materials, String csvList)
     {

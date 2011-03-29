@@ -1,4 +1,4 @@
-package com.elmakers.mine.craftbukkit.permission;
+package com.elmakers.mine.bukkit.borrowed;
 
 import java.util.Map;
 

@@ -1,8 +1,8 @@
 package com.elmakers.mine.bukkit.permission.dao;
 
+import com.elmakers.mine.bukkit.borrowed.PermissionProfile;
 import com.elmakers.mine.bukkit.persisted.PersistClass;
 import com.elmakers.mine.bukkit.persisted.PersistField;
-import com.elmakers.mine.craftbukkit.permission.PermissionProfile;
 
 /**
  * Represents a persistable permission profile

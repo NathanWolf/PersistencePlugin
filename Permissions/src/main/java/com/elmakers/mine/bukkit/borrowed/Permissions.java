@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package com.elmakers.mine.craftbukkit.permission;
+package com.elmakers.mine.bukkit.borrowed;
 
 /**
  * Represents a structure which may contain permissions, such as a profile or a
