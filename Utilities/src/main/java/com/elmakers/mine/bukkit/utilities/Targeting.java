@@ -485,7 +485,7 @@ public class Targeting
         targetThroughMaterials.put(mat, false);
     }
 
-    protected void reset()
+    public void reset()
     {
         playerLocation = player.getLocation();
         length = 0;
@@ -503,7 +503,7 @@ public class Targeting
         targetingComplete = false;
     }
 
-    protected void setMaxRange(int range, boolean allow)
+    public void setMaxRange(int range, boolean allow)
     {
         this.range = range;
         this.allowMaxRange = allow;

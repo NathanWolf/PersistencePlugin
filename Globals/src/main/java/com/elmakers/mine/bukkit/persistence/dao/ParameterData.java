@@ -16,7 +16,7 @@ public class ParameterData extends Persisted
     protected ParameterType listType;
     protected ParameterType type;
     protected String        value;
-
+    
     public ParameterData()
     {
 
@@ -175,16 +175,6 @@ public class ParameterData extends Persisted
         return value;
     }
 
-    public boolean isFlag(String flagName)
-    {
-        if (type == ParameterType.BOOLEAN && Boolean.parseBoolean(value))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
     public void setId(String id)
     {
         this.id = id;
@@ -203,5 +193,86 @@ public class ParameterData extends Persisted
     public void setValue(String value)
     {
         this.value = value;
+    }
+
+    public boolean isFlag(String flagName)
+    {
+        if (type == ParameterType.BOOLEAN && Boolean.parseBoolean(value))
+        {
+            return isMatch(flagName);
+        }
+
+        return false;
+    }
+    
+    public boolean isMatch(String flagName)
+    {
+        return id.equalsIgnoreCase(flagName);
+    }
+
+    public Material getMaterial()
+    {
+        return Material.getMaterial(getInteger());
+    }
+    
+    public MaterialList getMaterialList()
+    {
+        MaterialList materials = new MaterialList();
+        String[] matIds = value.split(",");
+        for (String matId : matIds)
+        {
+            try
+            {
+                int typeId = Integer.parseInt(matId.trim());
+                materials.add(Material.getMaterial(typeId));
+            }
+            catch (NumberFormatException ex)
+            {
+
+            }
+        }
+        return materials;
+    }
+    
+    public int getInteger()
+    {
+        int retValue = 0;
+        try
+        {
+            retValue = Integer.parseInt(value);
+        }
+        catch (NumberFormatException ex)
+        {
+
+        }
+        return retValue;
+    }
+    
+    public boolean getBoolean()
+    {
+        boolean retValue = false;
+        try
+        {
+            retValue = Boolean.parseBoolean(value);
+        }
+        catch (NumberFormatException ex)
+        {
+
+        }
+        return retValue;
+    }
+    
+    public double getDouble()
+    {
+        double retValue = 0;
+        try
+        {
+            retValue = Double.parseDouble(value);
+        }
+        catch (NumberFormatException ex)
+        {
+
+        }
+        return retValue;
     }
 }
