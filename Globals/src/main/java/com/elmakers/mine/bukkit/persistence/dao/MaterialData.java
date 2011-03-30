@@ -69,6 +69,12 @@ public class MaterialData extends Persisted
     {
         return type;
     }
+    
+    public String getName()
+    {
+        // TODO: Support variant names
+        return type.name().toLowerCase();
+    }
 
     /**
      * Returns a hash code for this Location- does not include orientation.

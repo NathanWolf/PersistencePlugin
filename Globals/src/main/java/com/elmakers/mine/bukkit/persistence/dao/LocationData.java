@@ -366,6 +366,21 @@ public class LocationData extends Persisted
             position.setY(y);
         }
     }
+    
+    public void setX(int x)
+    {
+        setX((Double)(double)x);
+    }
+    
+    public void setY(int y)
+    {
+        setY((Double)(double)y);
+    }
+
+    public void setZ(int z)
+    {
+        setZ((Double)(double)z);
+    }
 
     /**
      * @param yaw

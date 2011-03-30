@@ -9,10 +9,9 @@ import com.elmakers.mine.bukkit.persisted.PersistClass;
 import com.elmakers.mine.bukkit.persisted.PersistField;
 import com.elmakers.mine.bukkit.persisted.Persisted;
 
-@PersistClass(schema = "global", name = "parameter")
+@PersistClass(schema = "global", name = "parameter", contained = true)
 public class ParameterData extends Persisted
 {
-    protected String        id;
     protected ParameterType listType;
     protected ParameterType type;
     protected String        value;
@@ -151,12 +150,6 @@ public class ParameterData extends Persisted
         }
     }
 
-    @PersistField(id = true)
-    public String getId()
-    {
-        return id;
-    }
-
     @PersistField
     public ParameterType getListType()
     {
@@ -175,11 +168,6 @@ public class ParameterData extends Persisted
         return value;
     }
 
-    public void setId(String id)
-    {
-        this.id = id;
-    }
-
     public void setListType(ParameterType listType)
     {
         this.listType = listType;
@@ -195,19 +183,9 @@ public class ParameterData extends Persisted
         this.value = value;
     }
 
-    public boolean isFlag(String flagName)
+    public boolean isFlag()
     {
-        if (type == ParameterType.BOOLEAN && Boolean.parseBoolean(value))
-        {
-            return isMatch(flagName);
-        }
-
-        return false;
-    }
-    
-    public boolean isMatch(String flagName)
-    {
-        return id.equalsIgnoreCase(flagName);
+        return (type == ParameterType.BOOLEAN && Boolean.parseBoolean(value));
     }
 
     public Material getMaterial()
