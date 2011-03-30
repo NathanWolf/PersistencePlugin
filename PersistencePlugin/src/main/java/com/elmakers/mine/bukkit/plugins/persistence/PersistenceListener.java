@@ -1,8 +1,9 @@
 package com.elmakers.mine.bukkit.plugins.persistence;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.elmakers.mine.bukkit.persistence.Persistence;
 import com.elmakers.mine.bukkit.persistence.dao.PlayerData;
@@ -20,7 +21,7 @@ public class PersistenceListener extends PlayerListener
     }
 
     @Override
-    public void onPlayerJoin(PlayerEvent event)
+    public void onPlayerJoin(PlayerJoinEvent event)
     {
         // TODO!
         // PersistencePlugin.getInstance().getPermissions().initializePermissions();
@@ -41,7 +42,7 @@ public class PersistenceListener extends PlayerListener
     }
 
     @Override
-    public void onPlayerQuit(PlayerEvent event)
+    public void onPlayerQuit(PlayerQuitEvent event)
     {
         Player player = event.getPlayer();
         String playerName = player.getName();
