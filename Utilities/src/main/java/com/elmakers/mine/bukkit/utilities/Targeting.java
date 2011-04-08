@@ -28,7 +28,7 @@ public class Targeting
      *            The current direction
      * @return The direction to the left
      */
-    public static BlockFace goLeft(BlockFace direction)
+    public BlockFace goLeft(BlockFace direction)
     {
         switch (direction)
         {
@@ -55,7 +55,7 @@ public class Targeting
      *            The current direction
      * @return The direction to the right
      */
-    public static BlockFace goRight(BlockFace direction)
+    public BlockFace goRight(BlockFace direction)
     {
         switch (direction)
         {

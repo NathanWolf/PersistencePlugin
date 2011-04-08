@@ -48,6 +48,20 @@ public class PersistencePlugin extends JavaPlugin
     // TODO : support multiple perm files
     private static final String permissionsFile = "permissions.yml";
 
+
+    // TODO : Use Persistence.persistenceMap to track one persistence instance
+    // per server
+    private Persistence                          persistence     = null;
+
+    private DataStoreProvider                    defaultProvider = null;
+    private GroupManager                         groups          = null;
+    private final PersistenceCommands            handler         = new PersistenceCommands();
+    private final PersistenceListener            listener        = new PersistenceListener();
+    private List<Object>                         listeners       = null;
+    private PermissionManager                    permissions     = null;
+    private final Map<String, DataStoreProvider> providers       = new ConcurrentHashMap<String, DataStoreProvider>();
+    private PluginUtilities                      utilities       = null;
+
     /**
      * Retrieve the Logger used by Persistence.
      * 
@@ -59,34 +73,6 @@ public class PersistencePlugin extends JavaPlugin
     {
         return log;
     }
-
-    private DataStoreProvider                    defaultProvider = null;
-
-    private GroupManager                         groups          = null;
-
-    /*
-     * Plugin interface
-     */
-
-    private final PersistenceCommands            handler         = new PersistenceCommands();
-
-    private final PersistenceListener            listener        = new PersistenceListener();
-
-    /*
-     * Helper functions
-     */
-
-    private List<Object>                         listeners       = null;
-
-    private PermissionManager                    permissions     = null;
-
-    // TODO : Use Persistence.persistenceMap to track one persistence instance
-    // per server
-    private Persistence                          persistence     = null;
-
-    private final Map<String, DataStoreProvider> providers       = new ConcurrentHashMap<String, DataStoreProvider>();
-
-    private PluginUtilities                      utilities       = null;
 
     /**
      * Default constructor! Hooray!

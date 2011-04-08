@@ -9,9 +9,10 @@ import com.elmakers.mine.bukkit.persisted.PersistClass;
 import com.elmakers.mine.bukkit.persisted.PersistField;
 import com.elmakers.mine.bukkit.persisted.Persisted;
 
-@PersistClass(schema = "global", name = "parameter", contained = true)
+@PersistClass(schema = "global", name = "parameter")
 public class ParameterData extends Persisted
 {
+    protected String        id;
     protected ParameterType listType;
     protected ParameterType type;
     protected String        value;
@@ -21,8 +22,9 @@ public class ParameterData extends Persisted
 
     }
 
-    public ParameterData(List<? extends Object> dataList, Class<? extends Object> typeOf)
+    public ParameterData(String id, List<? extends Object> dataList, Class<? extends Object> typeOf)
     {
+        this.id = id;
         type = ParameterType.LIST;
         listType = ParameterType.UNKNOWN;
 
@@ -105,12 +107,13 @@ public class ParameterData extends Persisted
         value = sb.toString();
     }
 
-    public ParameterData(Object dataValue)
+    public ParameterData(String id, Object dataValue)
     {
-        Class<?> typeOf = dataValue.getClass();
+        this.id = id;
         listType = ParameterType.UNKNOWN;
         type = ParameterType.UNKNOWN;
 
+        Class<?> typeOf = dataValue.getClass();
         if (typeOf.equals(Material.class))
         {
             Material mat = (Material) dataValue;
@@ -148,6 +151,17 @@ public class ParameterData extends Persisted
             type = ParameterType.LIST;
             value = "";
         }
+    }
+
+    @PersistField(id=true)
+    public String getId()
+    {
+        return id;
+    }
+
+    public void setId(String id)
+    {
+        this.id = id;
     }
 
     @PersistField

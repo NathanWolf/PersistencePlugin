@@ -202,6 +202,27 @@ public class Persistence implements
 
         persistedClass.getAll(objects);
     }
+    
+    public <T> List<T> getAll(Class<T> objectType)
+    {
+        PersistentClass persistedClass = null;
+        try
+        {
+            persistedClass = getPersistedClass(objectType);
+        }
+        catch (InvalidPersistedClassException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        if (persistedClass == null)
+        {
+            return null;
+        }
+        List<T> list = new ArrayList<T>();
+        persistedClass.getAll(list);
+        return list;
+    }
 
     /**
      * Retrieve or create a persisted class, using the annotations built into

@@ -1,21 +1,32 @@
 package com.elmakers.mine.bukkit.persistence.dao;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Material;
 
 public class ParameterMap extends HashMap<String, ParameterData>
 {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
+    public void addAll(List<ParameterData> parameters)
+    {
+        for (ParameterData parameter : parameters)
+        {
+            put(parameter.getId(), parameter);
+        }
+    }
+    
     public boolean hasFlag(String flagName)
     {
         ParameterData flag = get(flagName);
         return flag != null && flag.isFlag();
+    }
+    
+    public boolean hasParameter(String paramName)
+    {
+        ParameterData flag = get(paramName);
+        return flag != null;
     }
     
     public int getInteger(String name, int defaultValue)
@@ -72,4 +83,5 @@ public class ParameterMap extends HashMap<String, ParameterData>
         
         return parameter.getValue();
     }
+
 }

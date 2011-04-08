@@ -50,6 +50,8 @@ public interface Persistence
      *            The type of object to retrieve
      */
     public abstract <T> void getAll(List<T> objects, Class<T> objectType);
+    
+    public abstract <T> List<T> getAll(Class<T> objectType);
 
     /**
      * Retrieve or create a persisted class, using the annotations built into
